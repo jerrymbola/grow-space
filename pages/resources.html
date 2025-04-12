@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ dark: window.matchMedia('(prefers-color-scheme: dark)').matches }" :class="{ 'dark': dark }">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grow Your Mind - Soluma</title>
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.25)',
+                        darkglass: 'rgba(15, 23, 42, 0.5)',
+                        darkbg: '#0f172a',
+                        lightbg: '#f8fafc',
+                        primary: {
+                            light: '#e0f2fe',
+                            dark: '#0369a1'
+                        },
+                        secondary: {
+                            light: '#f0fdf4',
+                            dark: '#166534'
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '4px',
+                        sm: '8px',
+                    },
+                    boxShadow: {
+                        glass: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    },
+                    screens: {
+                        'xs': '480px',
+                        'sm': '640px',
+                        'md': '768px',
+                        'lg': '992px',
+                    },
+                },
+            },
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 50%, #f0f9ff 100%);
+            min-height: 100vh;
+        }
+
+        .dark body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0c4a6e 100%);
+        }
+
+        /* Enhanced glass card styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Card hover effects */
+        .card-hover {
+            transition: all 0.3s ease, transform 0.2s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Ensure proper touch targets */
+        a,
+        button {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        /* Layout structure */
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Center toggle icon */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Resource category tabs */
+        .resource-tab {
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .resource-tab.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+
+        .dark .resource-tab.active {
+            border-bottom-color: #60a5fa;
+            color: #60a5fa;
+        }
+
+        /* Back button styling */
+        .back-button {
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateX(-3px);
+        }
+
+        /* Resource card styling */
+        .resource-card {
+            transition: all 0.3s ease;
+        }
+
+        .resource-card:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body class="font-sans transition-colors duration-300 text-gray-800 dark:text-gray-100">
+    <div class="page-container">
+        <!-- Navbar -->
+        <header class="py-4 px-6 lg:px-[3.5rem] w-full max-w-7xl mx-auto">
+            <div class="flex items-center justify-between">
+                <a href="../index.html" class="back-button flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <h1 class="text-2xl font-bold tracking-wide">Soluma</h1>
+                </a>
+                <button @click="dark = !dark" aria-label="Toggle dark mode"
+                    class="glass-card rounded-full p-2 hover:bg-white/30 dark:hover:bg-black/30 transition toggle-container">
+                    <template x-if="dark">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-300" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </template>
+                    <template x-if="!dark">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
+                        </svg>
+                    </template>
+                </button>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- Main Content -->
+            <main class="flex-1 w-full max-w-6xl mx-auto px-6 py-8 lg:px-8">
+                <div class="glass-card rounded-2xl p-6 md:p-8 mb-8">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-8">
+                        <h2
+                            class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3 mb-4 md:mb-0">
+                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6v6l4 2m6-6a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Grow Your Mind
+                        </h2>
+
+                        <!-- Resource Categories -->
+                        <div class="flex space-x-4 overflow-x-auto pb-2 md:pb-0">
+                            <button class="resource-tab active px-3 py-1 whitespace-nowrap">All Resources</button>
+                            <button class="resource-tab px-3 py-1 whitespace-nowrap">Books</button>
+                            <button class="resource-tab px-3 py-1 whitespace-nowrap">Videos</button>
+                            <button class="resource-tab px-3 py-1 whitespace-nowrap">Podcasts</button>
+                            <button class="resource-tab px-3 py-1 whitespace-nowrap">Articles</button>
+                            <button class="resource-tab px-3 py-1 whitespace-nowrap">Courses</button>
+                        </div>
+                    </div>
+
+                    <!-- Featured Resource -->
+                    <div class="glass-card rounded-2xl p-6 mb-8 resource-card">
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <div class="md:w-1/3">
+                                <div
+                                    class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+                                    <img src="https://i.ytimg.com/vi/6Gf-k1M6GfY/maxresdefault.jpg"
+                                        alt="Atomic Habits book summary" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            <div class="md:w-2/3">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span
+                                        class="text-xs font-medium px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full">Book
+                                        Summary</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">15 min read</span>
+                                </div>
+                                <h3 class="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Atomic
+                                    Habits by James Clear</h3>
+                                <p class="text-gray-700 dark:text-gray-300 mb-4">Tiny changes, remarkable results. Learn
+                                    how to build good habits and break bad ones with this practical guide to habit
+                                    formation.</p>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span
+                                        class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">Habit
+                                        Formation</span>
+                                    <span
+                                        class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">Productivity</span>
+                                    <span
+                                        class="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full">Self-Improvement</span>
+                                </div>
+                                <a href="#"
+                                    class="inline-flex items-center text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                                    Read Summary
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resource Grid -->
+                    <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Resource 1 -->
+                        <div class="card-hover glass-card rounded-2xl p-6 resource-card">
+                            <div
+                                class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden mb-4">
+                                <img src="https://i.ytimg.com/vi/HAnw168huqA/maxresdefault.jpg"
+                                    alt="The Power of Vulnerability" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-xs font-medium px-2 py-1 bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 rounded-full">TED
+                                    Talk</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">20 min</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">The Power of
+                                Vulnerability</h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">Brené Brown studies human
+                                connection and the power of vulnerability in this transformative talk.</p>
+                            <a href="#"
+                                class="inline-flex items-center text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                                Watch Video
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Resource 2 -->
+                        <div class="card-hover glass-card rounded-2xl p-6 resource-card">
+                            <div
+                                class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden mb-4">
+                                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                                    alt="Deep Work book" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-xs font-medium px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-full">Book</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">304 pages</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Deep Work</h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">Cal Newport explains how to develop
+                                the superpower of deep focus in a distracted world.</p>
+                            <a href="#"
+                                class="inline-flex items-center text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                                Learn More
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Resource 3 -->
+                        <div class="card-hover glass-card rounded-2xl p-6 resource-card">
+                            <div
+                                class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden mb-4">
+                                <img src="https://i.ytimg.com/vi/sWctLEdIgi4/maxresdefault.jpg" alt="Meditation Guide"
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-xs font-medium px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full">Guided
+                                    Practice</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">10 min</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Mindfulness Meditation
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">A simple 10-minute guided
+                                meditation to cultivate mindfulness and reduce stress.</p>
+                            <a href="#"
+                                class="inline-flex items-center text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                                Start Meditation
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Resource 4 -->
+                        <div class="card-hover glass-card rounded-2xl p-6 resource-card">
+                            <div
+                                class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden mb-4">
+                                <img src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                                    alt="Productivity Course" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-xs font-medium px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full">Online
+                                    Course</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">4 hours</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Building Better Habits
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">A comprehensive course on
+                                understanding habit loops and creating lasting behavior change.</p>
+                            <a href="#"
+                                class="inline-flex items-center text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                                Enroll Now
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Resource 5 -->
+                        <div class="card-hover glass-card rounded-2xl p-6 resource-card">
+                            <div
+                                class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden mb-4">
+                                <img src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                                    alt="Article" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-xs font-medium px-2 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full">Article</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">8 min read</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">The Science of Sleep
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">How quality sleep impacts cognitive
+                                function, emotional regulation, and overall wellbeing.</p>
+                            <a href="#"
+                                class="inline-flex items-center text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                                Read Article
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+
+                        <!-- Resource 6 -->
+                        <div class="card-hover glass-card rounded-2xl p-6 resource-card">
+                            <div
+                                class="aspect-w-16 aspect-h-9 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden mb-4">
+                                <img src="https://i.ytimg.com/vi/ReRcHdeUG9Y/maxresdefault.jpg" alt="Podcast"
+                                    class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span
+                                    class="text-xs font-medium px-2 py-1 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-full">Podcast</span>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">45 min</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">Emotional Intelligence
+                            </h3>
+                            <p class="text-gray-700 dark:text-gray-300 text-sm mb-4">Developing self-awareness and
+                                empathy in personal and professional relationships.</p>
+                            <a href="#"
+                                class="inline-flex items-center text-sm text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">
+                                Listen Now
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- View More Button -->
+                    <div class="mt-8 text-center">
+                        <button
+                            class="glass-card px-6 py-3 rounded-lg hover:bg-white/30 dark:hover:bg-black/30 transition">
+                            Load More Resources
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>
