@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ dark: true }" :class="{ 'dark': dark }">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soluma - Self Growth Oasis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.1)',
+                        darkbg: '#0f172a',
+                        lightbg: '#edf2f7' // Soft calm light background
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    },
+                },
+            },
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body
+    class="font-sans min-h-screen transition-colors duration-500 bg-lightbg dark:bg-darkbg text-gray-800 dark:text-gray-100">
+
+    <!-- Navbar -->
+    <div class="flex items-center justify-between px-6 md:px-[3.5rem] py-4">
+        <h1 class="text-2xl font-bold tracking-wide">Soluma</h1>
+        <!-- Dark Mode Toggle -->
+        <button @click="dark = !dark"
+            class="bg-white/20 dark:bg-black/20 backdrop-blur-md rounded-full p-2 hover:bg-white/30 dark:hover:bg-black/30 transition">
+            <template x-if="dark">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </template>
+            <template x-if="!dark">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-900" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
+                </svg>
+            </template>
+        </button>
+    </div>
+
+    <!-- Center Quote -->
+    <div class="flex flex-col justify-center items-center h-[70vh] text-center px-6 md:px-[3.5rem]">
+        <h1 class="text-4xl md:text-5xl font-bold drop-shadow-xl">Take a deep breath. You’re growing, not failing</h1>
+        <p class="mt-4 text-lg opacity-80">Welcome to your daily space of peace, purpose, and progress.</p>
+    </div>
+
+    <!-- Glassmorphism Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-6 md:px-[3.5rem] pb-10 max-w-7xl mx-auto">
+        <a href="/daily-boost.html"
+            class="bg-glass backdrop-blur-md p-6 rounded-2xl border border-white/20 hover:scale-105 transition cursor-pointer block">
+            <h2 class="text-xl font-semibold mb-2 flex items-center gap-2">
+                <svg class="w-6 h-6 text-yellow-300" fill="none" stroke="currentColor" stroke-width="1.5"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 4.5v-2m0 19v-2m8-7h2m-19 0h2m13.364 6.364l1.414-1.414M5.636 5.636L4.222 4.222m13.364-1.414l1.414 1.414M5.636 18.364l-1.414 1.414" />
+                </svg>
+                Daily Boost
+            </h2>
+            <p class="text-sm">Read a fresh quote or affirmation to start your day inspired.</p>
+        </a>
+
+        <a href="/journal.html"
+            class="bg-glass backdrop-blur-md p-6 rounded-2xl border border-white/20 hover:scale-105 transition cursor-pointer block">
+            <h2 class="text-xl font-semibold mb-2 flex items-center gap-2">
+                <svg class="w-6 h-6 text-green-300" fill="none" stroke="currentColor" stroke-width="1.5"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.862 4.487l1.09 1.09a2.25 2.25 0 010 3.182l-9.545 9.545a2.25 2.25 0 01-1.09.59l-3.293.732a.75.75 0 01-.898-.898l.732-3.293a2.25 2.25 0 01.59-1.09l9.545-9.545a2.25 2.25 0 013.182 0z" />
+                </svg>
+                Journal With Me
+            </h2>
+            <p class="text-sm">Get a prompt and write your thoughts. Reflect, grow, repeat.</p>
+        </a>
+
+        <a href="/resources.html"
+            class="bg-glass backdrop-blur-md p-6 rounded-2xl border border-white/20 hover:scale-105 transition cursor-pointer block">
+            <h2 class="text-xl font-semibold mb-2 flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" stroke-width="1.5"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6v6l4 2m6-6a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Grow Your Mind
+            </h2>
+            <p class="text-sm">Curated videos, books & resources to expand your mindset.</p>
+        </a>
+
+        <a href="/chat.html"
+            class="bg-glass backdrop-blur-md p-6 rounded-2xl border border-white/20 hover:scale-105 transition cursor-pointer block">
+            <h2 class="text-xl font-semibold mb-2 flex items-center gap-2">
+                <svg class="w-6 h-6 text-pink-300" fill="none" stroke="currentColor" stroke-width="1.5"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M7.5 12h.008v.008H7.5V12zm4.5 0h.008v.008H12V12zm4.5 0h.008v.008H16.5V12zm1.125 7.125A9.004 9.004 0 013 12c0-4.97 4.03-9 9-9s9 4.03 9 9c0 1.61-.424 3.122-1.167 4.434a.75.75 0 00-.083.582l.54 2.162a.375.375 0 01-.482.447l-2.162-.54a.75.75 0 00-.582.083z" />
+                </svg>
+                Talk To Someone
+            </h2>
+            <p class="text-sm">Feeling lonely? Chat with an AI or find someone online to listen.</p>
+        </a>
+    </div>
+
+</body>
+
+</html>
