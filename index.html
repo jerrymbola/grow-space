@@ -44,32 +44,16 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* Animated Background Gradient */
+        /* Solid Background Colors */
         body {
-            background: linear-gradient(-45deg, #f0fdfa, #ecfdf5, #f0f9ff, #e0f2fe);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+            background-color: #f8fafc;
+            /* Light mode background */
             min-height: 100vh;
         }
 
         .dark body {
-            background: linear-gradient(-45deg, #0f172a, #1e293b, #0c4a6e, #0369a1);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-        }
-
-        @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+            background-color: #0f172a;
+            /* Dark mode background */
         }
 
         /* Enhanced glass card styling */
@@ -123,32 +107,6 @@
         .card-hover:hover {
             transform: translateY(-8px) scale(1.02);
             box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Ripple Effect */
-        .ripple-container {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ripple-effect {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(0);
-            animation: ripple 600ms linear;
-            pointer-events: none;
-        }
-
-        .dark .ripple-effect {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
         }
 
         /* Theme Toggle Animation */
@@ -211,7 +169,6 @@
             display: flex;
             flex-direction: column;
             padding-top: 80px;
-            /* Offset for sticky header */
         }
 
         .hero-section {
@@ -226,28 +183,18 @@
             right: 0;
             z-index: 50;
             background: rgba(248, 250, 252, 0.8);
-            /* Light mode bg with opacity */
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
         }
 
         .dark .sticky-header {
             background: rgba(15, 23, 42, 0.8);
-            /* Dark mode bg with opacity */
-        }
-
-        /* Center toggle icon */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         /* Mobile adjustments */
         @media (max-width: 480px) {
             .content-wrapper {
                 padding-top: 70px;
-                /* Smaller offset for mobile */
             }
 
             .hero-section {
@@ -256,16 +203,12 @@
 
             .hero-title {
                 font-size: 1.75rem;
-                /* 28px */
                 line-height: 2.25rem;
-                /* 36px */
             }
 
             .hero-subtitle {
                 font-size: 1.125rem;
-                /* 18px */
                 line-height: 1.75rem;
-                /* 28px */
             }
         }
     </style>
@@ -293,7 +236,6 @@
             </div>
         </header>
 
-
         <div class="content-wrapper">
             <!-- Hero Section -->
             <section class="hero-section flex flex-col justify-center items-center text-center px-6">
@@ -312,7 +254,7 @@
                 <div
                     class="grid grid-cols-2 min-[480px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     <a href="./pages/daily-boost.html" aria-label="Daily Boost"
-                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" fill="none" stroke="currentColor"
@@ -327,7 +269,7 @@
                     </a>
 
                     <a href="./pages/journal.html" aria-label="Journal With Me"
-                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor"
@@ -342,7 +284,7 @@
                     </a>
 
                     <a href="./pages/resources.html" aria-label="Grow Your Mind"
-                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" fill="none" stroke="currentColor"
@@ -357,7 +299,7 @@
                     </a>
 
                     <a href="./pages/chat.html" aria-label="Talk To Someone"
-                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" fill="none" stroke="currentColor"
@@ -407,28 +349,6 @@
 
             // Start the text animation
             startTextAnimation();
-
-            // Ripple Effect for Cards
-            const cards = document.querySelectorAll('.ripple-container');
-
-            cards.forEach(card => {
-                card.addEventListener('click', function (e) {
-                    const rect = this.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-
-                    const ripple = document.createElement('span');
-                    ripple.classList.add('ripple-effect');
-                    ripple.style.left = `${x}px`;
-                    ripple.style.top = `${y}px`;
-
-                    this.appendChild(ripple);
-
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
         });
     </script>
 </body>
