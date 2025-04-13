@@ -184,7 +184,7 @@
             background: rgba(15, 23, 42, 0.8);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         /* Reduced motion */
         @media (prefers-reduced-motion: reduce) {
             * {
@@ -393,59 +393,35 @@
                 ];
                 let currentPhrase = 0;
 
-                // Create a blinking cursor element
-                const cursor = document.createElement('span');
-                cursor.className = 'typing-cursor';
-                cursor.textContent = '|';
-                cursor.style.animation = 'blink 1s infinite';
-
-                // Add styles for blinking cursor
-                const style = document.createElement('style');
-                style.textContent = `
-            @keyframes blink {
-                0%, 100% { opacity: 1; }
-                50% { opacity: 0; }
-            }
-            .typing-cursor {
-                display: inline-block;
-                color: currentColor;
-                margin-left: 2px;
-            }
-        `;
-                document.head.appendChild(style);
+                // Check for reduced motion preference
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
                 function typeWriter(text, i, fnCallback) {
                     if (i < text.length) {
-                        heroTitle.innerHTML = text.substring(0, i + 1);
-                        heroTitle.appendChild(cursor);
+                        heroTitle.innerHTML = text.substring(0, i + 1) + '<span class="text-transparent">|</span>';
                         setTimeout(function () {
-                            typeWriter(text, i + 1, fnCallback);
-                        }, 120);
+                            typeWriter(text, i + 1, fnCallback)
+                        }, 120); // Slowed from 100ms to 120ms per character
                     } else if (typeof fnCallback == 'function') {
-                        // Keep cursor blinking at end of phrase
-                        heroTitle.innerHTML = text;
-                        heroTitle.appendChild(cursor);
-                        setTimeout(fnCallback, 2500);
+                        setTimeout(fnCallback, 2500); // Increased pause from 2000ms to 2500ms
                     }
                 }
 
                 function startTextAnimation() {
                     typeWriter(phrases[currentPhrase], 0, function () {
                         currentPhrase = (currentPhrase + 1) % phrases.length;
-                        setTimeout(startTextAnimation, 800);
+                        setTimeout(startTextAnimation, 800); // Added brief pause between phrases
                     });
                 }
 
-                // Check for reduced motion preference
-                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                if (prefersReducedMotion) {
                     heroTitle.textContent = phrases[0];
                 } else {
-                    // Start with just the cursor before typing begins
-                    heroTitle.innerHTML = '';
-                    heroTitle.appendChild(cursor);
+                    // Start the text animation after a brief delay
                     setTimeout(startTextAnimation, 1000);
                 }
             });
+
 
         // Simple debounce function for theme toggle
         function debounce(func, wait) {
