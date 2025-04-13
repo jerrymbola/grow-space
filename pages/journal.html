@@ -42,6 +42,7 @@
                     },
                     boxShadow: {
                         glass: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                        glow: '0 0 10px rgba(74, 222, 128, 0.5)',
                     },
                 },
             },
@@ -59,6 +60,7 @@
             background-color: #0f172a;
         }
 
+        /* Header */
         .sticky-header {
             position: fixed;
             top: 0;
@@ -80,6 +82,7 @@
             padding-top: 80px;
         }
 
+        /* Journal Cards */
         .journal-card {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(8px);
@@ -99,6 +102,7 @@
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
+        /* Editor Styles */
         .journal-editor {
             min-height: 200px;
             font-size: 1rem;
@@ -106,10 +110,39 @@
             outline: none;
         }
 
-        .prompt-card:hover {
-            transform: translateY(-3px);
+        /* Prompt Cards */
+        .prompt-card {
+            transition: all 0.2s ease;
         }
 
+        .prompt-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Icons */
+        .journal-icon {
+            filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.5));
+        }
+
+        /* Animations */
+        @keyframes gentlePulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.9;
+            }
+        }
+
+        .animate-gentle-pulse {
+            animation: gentlePulse 3s infinite;
+        }
+
+        /* Mobile adjustments */
         @media (max-width: 640px) {
             .content-wrapper {
                 padding-top: 70px;
@@ -131,24 +164,23 @@
                     <a href="../index.html"
                         class="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
                         <span class="text-2xl font-bold tracking-wide text-gray-900 dark:text-gray-100">b.you!</span>
                     </a>
                 </div>
                 <button @click="dark = !dark" aria-label="Toggle dark mode" aria-pressed="false"
                     x-bind:aria-pressed="dark"
-                    class="theme-toggle glass-card hover:bg-white/30 dark:hover:bg-black/30 w-12 h-12 rounded-full flex items-center justify-center">
+                    class="theme-toggle glass-card hover:bg-white/30 dark:hover:bg-black/30 w-12 h-12 rounded-full flex items-center justify-center focus:outline-none">
                     <svg xmlns="http://www.w3.org/2000/svg" class="sun h-6 w-6 text-yellow-300" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <svg xmlns="http://www.w3.org/2000/svg" class="moon h-6 w-6 text-blue-800" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
                             d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
                     </svg>
                 </button>
@@ -160,8 +192,8 @@
             <section class="w-full max-w-7xl mx-auto px-6 lg:px-[3.5rem] py-10">
                 <!-- Header -->
                 <div class="flex items-center gap-4 mb-8">
-                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                        viewBox="0 0 24 24">
+                    <svg class="w-8 h-8 text-green-500 journal-icon animate-gentle-pulse" fill="none"
+                        stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M16.862 4.487l1.687 1.688a1.875 1.875 0 010 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                     </svg>
@@ -171,9 +203,13 @@
                 <!-- Today's Journal Card -->
                 <div class="journal-card rounded-2xl p-6 mb-8">
                     <div class="p-4">
-                        <h3 class="text-lg font-semibold mb-4">Today's Reflection</h3>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold">Today's Reflection</h3>
+                            <span class="text-sm text-gray-500 dark:text-gray-400"
+                                x-text="new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })"></span>
+                        </div>
                         <div x-model="entryContent" x-ref="journalEditor"
-                            @input="entryContent = $event.target.innerHTML" class="journal-editor"
+                            @input="entryContent = $event.target.innerHTML" class="journal-editor p-3 rounded-lg"
                             contenteditable="true"
                             x-html="entryContent || '<span class=\'text-gray-400\'>Write your thoughts here... Click a prompt below if you need inspiration.</span>'"
                             @focus="if($refs.journalEditor.innerHTML.includes('text-gray-400')) $refs.journalEditor.innerHTML = ''"
@@ -192,14 +228,18 @@
                                         savedEntries.unshift(newEntry);
                                         localStorage.setItem('journalEntries', JSON.stringify(savedEntries));
                                         entryContent = '';
-                                        $refs.journalEditor.innerHTML = '<span class=\'text-gray-400\'>Entry saved! Write more or try another prompt.</span>';
+                                        $refs.journalEditor.innerHTML = '<span class=\'text-gray-400\'>✓ Entry saved! Write more or try another prompt.</span>';
                                         activePrompt = null;
                                     }
                                 " :class="{
-                                    'bg-green-500 hover:bg-green-600': entryContent.trim() && !entryContent.includes('text-gray-400'),
+                                    'bg-green-500 hover:bg-green-600 shadow-md': entryContent.trim() && !entryContent.includes('text-gray-400'),
                                     'bg-gray-300 cursor-not-allowed dark:bg-gray-600': !entryContent.trim() || entryContent.includes('text-gray-400')
                                 }"
-                                class="text-white font-medium py-2 px-6 rounded-lg transition-colors text-sm md:text-base">
+                                class="text-white font-medium py-2 px-6 rounded-lg transition-all flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
                                 Save Entry
                             </button>
                         </div>
@@ -208,42 +248,79 @@
 
                 <!-- Journal Prompts Grid -->
                 <div class="mt-8">
-                    <h2 class="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">Daily Prompts</h2>
+                    <h2 class="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Daily Prompts
+                    </h2>
                     <div class="prompt-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div @click="
                                 activePrompt = 1;
-                                $refs.journalEditor.innerHTML = 'What made you smile today?<br>';
+                                $refs.journalEditor.innerHTML = '<strong>What made you smile today?</strong><br><br>';
                                 $refs.journalEditor.focus();
                             " :class="{
-                                'border-green-500 bg-green-50/30 dark:bg-green-900/10': activePrompt === 1,
+                                'border-green-500 bg-green-50/30 dark:bg-green-900/10 shadow-glow': activePrompt === 1,
                                 'border-transparent': activePrompt !== 1
                             }" class="journal-card prompt-card rounded-xl p-5 cursor-pointer border-2 transition-all">
-                            <h3 class="font-medium mb-2">What made you smile today?</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Reflect on positive moments</p>
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <div>
+                                    <h3 class="font-medium mb-1">What made you smile today?</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Reflect on positive moments</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div @click="
                                 activePrompt = 2;
-                                $refs.journalEditor.innerHTML = 'What challenge did you overcome?<br>';
+                                $refs.journalEditor.innerHTML = '<strong>What challenge did you overcome?</strong><br><br>';
                                 $refs.journalEditor.focus();
                             " :class="{
-                                'border-green-500 bg-green-50/30 dark:bg-green-900/10': activePrompt === 2,
+                                'border-green-500 bg-green-50/30 dark:bg-green-900/10 shadow-glow': activePrompt === 2,
                                 'border-transparent': activePrompt !== 2
                             }" class="journal-card prompt-card rounded-xl p-5 cursor-pointer border-2 transition-all">
-                            <h3 class="font-medium mb-2">What challenge did you overcome?</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Celebrate your resilience</p>
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                                <div>
+                                    <h3 class="font-medium mb-1">What challenge did you overcome?</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Celebrate your resilience</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div @click="
                                 activePrompt = 3;
-                                $refs.journalEditor.innerHTML = 'What are you grateful for?<br>';
+                                $refs.journalEditor.innerHTML = '<strong>What are you grateful for?</strong><br><br>';
                                 $refs.journalEditor.focus();
                             " :class="{
-                                'border-green-500 bg-green-50/30 dark:bg-green-900/10': activePrompt === 3,
+                                'border-green-500 bg-green-50/30 dark:bg-green-900/10 shadow-glow': activePrompt === 3,
                                 'border-transparent': activePrompt !== 3
                             }" class="journal-card prompt-card rounded-xl p-5 cursor-pointer border-2 transition-all">
-                            <h3 class="font-medium mb-2">What are you grateful for?</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Practice gratitude</p>
+                            <div class="flex items-start gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                <div>
+                                    <h3 class="font-medium mb-1">What are you grateful for?</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Practice gratitude</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -251,29 +328,49 @@
                 <!-- Previous Entries Section -->
                 <div class="mt-12" x-show="savedEntries.length > 0">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Your Journal Entries</h2>
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            Your Journal Entries
+                        </h2>
                         <button
                             @click="if(confirm('Clear all journal entries?')) { savedEntries = []; localStorage.removeItem('journalEntries'); }"
-                            class="text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                            class="text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
                             Clear All
                         </button>
                     </div>
                     <div class="space-y-4">
                         <template x-for="(entry, index) in savedEntries" :key="entry.timestamp">
-                            <div class="journal-card rounded-xl p-5">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="font-medium" x-text="entry.date"></h3>
+                            <div class="journal-card rounded-xl p-5 hover:shadow-md transition-all">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-500"
+                                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        </svg>
+                                        <h3 class="font-medium" x-text="entry.date"></h3>
+                                    </div>
                                     <button
                                         @click="if(confirm('Delete this entry?')) { savedEntries.splice(index, 1); localStorage.setItem('journalEntries', JSON.stringify(savedEntries)); }"
-                                        class="text-red-500 hover:text-red-700 dark:hover:text-red-400">
+                                        class="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="text-gray-700 dark:text-gray-300" x-html="entry.content"></div>
+                                <div class="text-gray-700 dark:text-gray-300 prose dark:prose-invert max-w-none"
+                                    x-html="entry.content"></div>
                             </div>
                         </template>
                     </div>

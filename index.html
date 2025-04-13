@@ -130,6 +130,7 @@
         /* Icon alignment fix */
         .card-icon {
             margin-top: 0.25rem;
+            filter: url(#glow);
         }
 
         /* Ensure proper touch targets */
@@ -244,6 +245,16 @@
     </style>
 </head>
 
+/* SVG filter definition </body> */
+<svg class="hidden">
+    <defs>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+</svg>
+
 <body class="font-sans transition-colors duration-300 text-gray-800 dark:text-gray-100">
     <div class="page-container">
         <!-- Sticky Navbar -->
@@ -290,18 +301,18 @@
                     <a href="./pages/daily-boost.html" role="button" aria-labelledby="daily-title daily-desc"
                         class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block focus:outline-none">
                         <div class="card-content">
-                            <svg aria-hidden="true" class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" fill="none"
-                                stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <svg aria-hidden="true"
+                                class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.6)]"
+                                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                             </svg>
                             <div class="card-text-wrapper">
                                 <h2 id="daily-title"
                                     class="card-title text-base sm:text-xs md:text-xl font-semibold text-gray-900 dark:text-gray-100">
                                     Daily Boost
                                 </h2>
-                                <p id="daily-desc"
-                                    class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                <p id="daily-desc" class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
                                     Read a fresh quote or affirmation to start your day inspired.
                                 </p>
                             </div>
@@ -334,19 +345,18 @@
                     <a href="./pages/resources.html" role="button" aria-labelledby="grow-title grow-desc"
                         class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block focus:outline-none">
                         <div class="card-content">
-                            <svg aria-hidden="true" class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-blue-500" fill="none"
-                                stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <svg aria-hidden="true"
+                                class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]" fill="none"
+                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3" />
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                             </svg>
                             <div class="card-text-wrapper">
                                 <h2 id="grow-title"
                                     class="card-title text-base sm:text-xs md:text-xl font-semibold text-gray-900 dark:text-gray-100">
                                     Grow Your Mind
                                 </h2>
-                                <p id="grow-desc"
-                                    class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                <p id="grow-desc" class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
                                     Curated videos, books & resources to expand your mindset.
                                 </p>
                             </div>
