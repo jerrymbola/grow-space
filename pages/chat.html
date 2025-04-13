@@ -3,7 +3,7 @@
   dark: window.matchMedia('(prefers-color-scheme: dark)').matches,
   activeTab: 'ai',
   messages: [
-    { sender: 'ai', text: 'Hello there! I\'m Soluma. How are you feeling today?', time: '2:45 PM' },
+    { sender: 'ai', text: 'Hello there! I\'m Harmony. How are you feeling today?', time: '2:45 PM' },
     { sender: 'user', text: 'I\'m feeling a bit overwhelmed with work lately.', time: '2:46 PM' },
     { sender: 'ai', text: 'I hear you. It\'s completely normal to feel that way sometimes. Would you like to talk about what specifically is overwhelming you?', time: '2:46 PM' }
   ],
@@ -37,7 +37,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talk To Someone - Soluma</title>
+    <title>Talk To Someone - b.you!</title>
     <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -217,7 +217,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    <h1 class="text-2xl font-bold tracking-wide">Soluma</h1>
+                    <h1 class="text-2xl font-bold tracking-wide">b.you!</h1>
                 </a>
                 <button @click="dark = !dark" aria-label="Toggle dark mode"
                     class="glass-card rounded-full p-2 hover:bg-white/30 dark:hover:bg-black/30 transition toggle-container">
@@ -260,7 +260,7 @@
                         <button @click="activeTab = 'ai'"
                             :class="{ 'active': activeTab === 'ai', 'text-gray-500 dark:text-gray-400': activeTab !== 'ai' }"
                             class="chat-tab px-4 py-2 text-gray-900 dark:text-gray-100">
-                            Chat with Soluma AI
+                            Chat with Harmony AI
                         </button>
                         <button @click="activeTab = 'community'"
                             :class="{ 'active': activeTab === 'community', 'text-gray-500 dark:text-gray-400': activeTab !== 'community' }"
@@ -282,7 +282,7 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 class="font-medium text-gray-900 dark:text-gray-100">Soluma AI</h3>
+                                    <h3 class="font-medium text-gray-900 dark:text-gray-100">Harmony AI</h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">Always here to listen</p>
                                 </div>
                             </div>

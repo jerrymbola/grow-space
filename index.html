@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ dark: window.matchMedia('(prefers-color-scheme: dark)').matches }" :class="{ 'dark': dark }">
+<html lang="en" x-data="{ dark: false }" :class="{ 'dark': dark }">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soluma - Self Growth Oasis</title>
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <title>b.you! - Self Growth Oasis</title>
     <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
@@ -37,12 +37,6 @@
                     },
                     boxShadow: {
                         glass: '0 4px 30px rgba(0, 0, 0, 0.1)',
-                    },
-                    screens: {
-                        'xs': '480px',  // 1 column below this
-                        'sm': '640px',   // 2 columns from 480px-991px
-                        'md': '768px',
-                        'lg': '992px',   // 4 columns from 992px+
                     },
                 },
             },
@@ -101,10 +95,30 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            padding-top: 80px;
+            /* Offset for sticky header */
         }
 
         .hero-section {
             flex: 1;
+        }
+
+        /* Sticky header */
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(248, 250, 252, 0.8);
+            /* Light mode bg with opacity */
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .dark .sticky-header {
+            background: rgba(15, 23, 42, 0.8);
+            /* Dark mode bg with opacity */
         }
 
         /* Center toggle icon */
@@ -113,27 +127,53 @@
             align-items: center;
             justify-content: center;
         }
+
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+            .content-wrapper {
+                padding-top: 70px;
+                /* Smaller offset for mobile */
+            }
+
+            .hero-section {
+                padding-top: 1rem;
+            }
+
+            .hero-title {
+                font-size: 1.75rem;
+                /* 28px */
+                line-height: 2.25rem;
+                /* 36px */
+            }
+
+            .hero-subtitle {
+                font-size: 1.125rem;
+                /* 18px */
+                line-height: 1.75rem;
+                /* 28px */
+            }
+        }
     </style>
 </head>
 
 <body class="font-sans transition-colors duration-300 text-gray-800 dark:text-gray-100">
     <div class="page-container">
-        <!-- Navbar -->
-        <header class="py-4 px-6 lg:px-[3.5rem] w-full max-w-7xl mx-auto">
-            <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold tracking-wide text-gray-900 dark:text-gray-100">Soluma</h1>
+        <!-- Sticky Navbar -->
+        <header class="sticky-header py-4 w-full border-b border-white/30 dark:border-gray-600/30">
+            <div class="flex items-center justify-between px-6 lg:px-[3.5rem] max-w-7xl mx-auto">
+                <h1 class="text-2xl font-bold tracking-wide text-gray-900 dark:text-gray-100">b.you!</h1>
                 <button @click="dark = !dark" aria-label="Toggle dark mode"
                     class="glass-card rounded-full p-2 hover:bg-white/30 dark:hover:bg-black/30 transition toggle-container">
                     <template x-if="dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-300" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-300" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </template>
                     <template x-if="!dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
                         </svg>
@@ -142,84 +182,82 @@
             </div>
         </header>
 
+
         <div class="content-wrapper">
             <!-- Hero Section -->
-            <section class="hero-section flex flex-col justify-center items-center text-center px-6 py-8 md:py-12">
+            <section class="hero-section flex flex-col justify-center items-center text-center px-6">
                 <div class="max-w-3xl mx-auto">
-                    <h1 class="text-3xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                    <h1 class="hero-title text-3xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
                         Take a deep breath. You're growing, not failing
                     </h1>
-                    <p class="text-lg md:text-2xl text-gray-700 dark:text-gray-300">
+                    <p class="hero-subtitle text-lg md:text-2xl text-gray-700 dark:text-gray-300">
                         Welcome to your daily space of peace, purpose, and progress.
                     </p>
                 </div>
             </section>
 
-            <!-- Cards Section with responsive grid -->
+            <!-- Cards Section -->
             <section class="w-full max-w-7xl mx-auto px-6 lg:px-[3.5rem] pb-10 mt-auto">
-                <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    <!-- Daily Boost Card -->
+                <div
+                    class="grid grid-cols-2 min-[480px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     <a href="./pages/daily-boost.html" aria-label="Daily Boost"
-                        class="card-hover glass-card p-4 md:p-6 rounded-2xl cursor-pointer block">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
-                            class="text-lg md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 md:w-6 md:h-6 text-yellow-500" fill="none" stroke="currentColor"
+                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" fill="none" stroke="currentColor"
                                 stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 4.5v-2m0 19v-2m8-7h2m-19 0h2m13.364 6.364l1.414-1.414M5.636 5.636L4.222 4.222m13.364-1.414l1.414 1.414M5.636 18.364l-1.414 1.414" />
                             </svg>
                             Daily Boost
                         </h2>
-                        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">Read a fresh quote or
-                            affirmation to start your day inspired.</p>
+                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Read a fresh quote
+                            or affirmation to start your day inspired.</p>
                     </a>
 
-                    <!-- Journal With Me Card -->
                     <a href="./pages/journal.html" aria-label="Journal With Me"
-                        class="card-hover glass-card p-4 md:p-6 rounded-2xl cursor-pointer block">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
-                            class="text-lg md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 md:w-6 md:h-6 text-green-500" fill="none" stroke="currentColor"
+                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor"
                                 stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M16.862 4.487l1.09 1.09a2.25 2.25 0 010 3.182l-9.545 9.545a2.25 2.25 0 01-1.09.59l-3.293.732a.75.75 0 01-.898-.898l.732-3.293a2.25 2.25 0 01.59-1.09l9.545-9.545a2.25 2.25 0 013.182 0z" />
                             </svg>
                             Journal With Me
                         </h2>
-                        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">Get a prompt and write your
-                            thoughts. Reflect, grow, repeat.</p>
+                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Get a prompt and
+                            write your thoughts. Reflect, grow, repeat.</p>
                     </a>
 
-                    <!-- Grow Your Mind Card -->
                     <a href="./pages/resources.html" aria-label="Grow Your Mind"
-                        class="card-hover glass-card p-4 md:p-6 rounded-2xl cursor-pointer block">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
-                            class="text-lg md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 md:w-6 md:h-6 text-blue-500" fill="none" stroke="currentColor"
+                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" fill="none" stroke="currentColor"
                                 stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 6v6l4 2m6-6a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             Grow Your Mind
                         </h2>
-                        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">Curated videos, books &
-                            resources to expand your mindset.</p>
+                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Curated videos,
+                            books & resources to expand your mindset.</p>
                     </a>
 
-                    <!-- Talk To Someone Card -->
                     <a href="./pages/chat.html" aria-label="Talk To Someone"
-                        class="card-hover glass-card p-4 md:p-6 rounded-2xl cursor-pointer block">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
-                            class="text-lg md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 md:w-6 md:h-6 text-pink-500" fill="none" stroke="currentColor"
+                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" fill="none" stroke="currentColor"
                                 stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M7.5 12h.008v.008H7.5V12zm4.5 0h.008v.008H12V12zm4.5 0h.008v.008H16.5V12zm1.125 7.125A9.004 9.004 0 013 12c0-4.97 4.03-9 9-9s9 4.03 9 9c0 1.61-.424 3.122-1.167 4.434a.75.75 0 00-.083.582l.54 2.162a.375.375 0 01-.482.447l-2.162-.54a.75.75 0 00-.582.083z" />
                             </svg>
                             Talk To Someone
                         </h2>
-                        <p class="text-sm md:text-base text-gray-700 dark:text-gray-300">Feeling lonely? Chat with an AI
-                            or find someone online to listen.</p>
+                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Feeling lonely? Chat
+                            with an AI or find someone online to listen.</p>
                     </a>
                 </div>
             </section>
