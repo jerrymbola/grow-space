@@ -103,6 +103,8 @@
             font-size: 1rem;
             line-height: 1.5;
             outline: none;
+            direction: ltr;
+            text-align: left;
         }
 
         @media (max-width: 768px) {
@@ -258,23 +260,20 @@
                             <span class="text-sm text-gray-500 dark:text-gray-400"
                                 x-text="new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })"></span>
                         </div>
-                        <div x-model="entryContent" x-ref="journalEditor"
-                            @input="entryContent = $event.target.innerHTML" class="journal-editor p-3 rounded-lg"
-                            contenteditable="true"
-                            x-html="entryContent || '<span class=\'text-gray-400\'>Write your thoughts here... Click a prompt below if you need inspiration.</span>'"
-                            @focus="if($refs.journalEditor.innerHTML.includes('text-gray-400')) $refs.journalEditor.innerHTML = ''"
-                            @blur="if($refs.journalEditor.innerHTML === '') $refs.journalEditor.innerHTML = '<span class=\'text-gray-400\'>Write your thoughts here...</span>'">
-                        </div>
+                        <textarea x-model="entryContent" x-ref="journalEditor"
+                            class="journal-editor w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-darkglass resize-none min-h-[200px]"
+                            placeholder="Write your thoughts here... Click a prompt below if you need inspiration.">
+                        </textarea>
 
                         <!-- Save Button -->
                         <div class="flex justify-end mt-4">
                             <button @click="saveEntry()" :class="{
-                                    'bg-green-500 hover:bg-green-600 shadow-md': entryContent.trim() && !entryContent.includes('text-gray-400'),
-                                    'bg-gray-300 cursor-not-allowed dark:bg-gray-600': !entryContent.trim() || entryContent.includes('text-gray-400')
+                                    'bg-green-500 hover:bg-green-600 shadow-md': entryContent.trim(),
+                                    'bg-gray-300 cursor-not-allowed dark:bg-gray-600': !entryContent.trim()
                                 }"
                                 class="text-white font-medium py-2 px-6 rounded-lg transition-all flex items-center gap-2">
-                                Save Entry <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                    stroke-width="2">
+                                Save Entry <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
                             </button>
@@ -394,8 +393,8 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="text-gray-700 dark:text-gray-300 prose dark:prose-invert max-w-none"
-                                    x-html="entry.content"></div>
+                                <div class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
+                                    x-text="entry.content"></div>
                             </div>
                         </template>
                     </div>
@@ -436,25 +435,12 @@
 
                 applyPrompt(promptId, promptText) {
                     this.activePrompt = promptId;
-                    this.$refs.journalEditor.innerHTML = `<strong>${promptText}</strong><br><br>`;
-                    this.entryContent = this.$refs.journalEditor.innerHTML;
+                    this.entryContent = `${promptText}\n\n`;
                     this.$refs.journalEditor.focus();
-
-                    // Move cursor to end (fixes typing direction)
-                    this.moveCursorToEnd(this.$refs.journalEditor);
-                },
-
-                moveCursorToEnd(element) {
-                    const range = document.createRange();
-                    const selection = window.getSelection();
-                    range.selectNodeContents(element);
-                    range.collapse(false); // false means move to end
-                    selection.removeAllRanges();
-                    selection.addRange(range);
                 },
 
                 saveEntry() {
-                    if (!this.entryContent.trim() || this.entryContent.includes('text-gray-400')) return;
+                    if (!this.entryContent.trim()) return;
 
                     const newEntry = {
                         date: new Date().toLocaleDateString('en-US', {
@@ -472,7 +458,6 @@
 
                     // Reset editor
                     this.entryContent = '';
-                    this.$refs.journalEditor.innerHTML = '<span class="text-gray-400">✓ Entry saved! Write more or try another prompt.</span>';
                     this.activePrompt = null;
                 },
 
