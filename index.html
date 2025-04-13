@@ -73,6 +73,7 @@
         .card-hover:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         /* Theme Toggle Animation */
@@ -137,6 +138,11 @@
         button {
             min-width: 44px;
             min-height: 44px;
+        }
+
+        a:focus {
+            outline: 2px solid currentColor;
+            outline-offset: 2px;
         }
 
         /* Layout structure */
@@ -217,6 +223,7 @@
                 width: 16px;
                 height: 16px;
                 margin-top: 0;
+                align-self: flex-start;
             }
         }
     </style>
