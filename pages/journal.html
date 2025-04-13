@@ -1,10 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ 
-    dark: localStorage.getItem('dark') === 'true',
-    entryContent: '',
-    savedEntries: JSON.parse(localStorage.getItem('journalEntries')) || [],
-    activePrompt: null
- }" :class="{ 'dark': dark }" x-init="$watch('dark', value => localStorage.setItem('dark', value))">
+<html lang="en" x-data="journalApp()" :class="{ 'dark': dark }">
 
 <head>
     <meta charset="UTF-8">
@@ -106,8 +101,22 @@
         .journal-editor {
             min-height: 200px;
             font-size: 1rem;
-            line-height: 1.75;
+            line-height: 1.5;
             outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .journal-editor {
+                font-size: 0.9375rem;
+                line-height: 1.6;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .journal-editor {
+                font-size: 0.875rem;
+                line-height: 1.65;
+            }
         }
 
         /* Prompt Cards */
@@ -118,6 +127,47 @@
         .prompt-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Typography Adjustments */
+        .text-lg-responsive {
+            font-size: 1.125rem;
+        }
+
+        .text-xl-responsive {
+            font-size: 1.25rem;
+        }
+
+        .text-2xl-responsive {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .text-lg-responsive {
+                font-size: 1.0625rem;
+            }
+
+            .text-xl-responsive {
+                font-size: 1.1875rem;
+            }
+
+            .text-2xl-responsive {
+                font-size: 1.375rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .text-lg-responsive {
+                font-size: 1rem;
+            }
+
+            .text-xl-responsive {
+                font-size: 1.125rem;
+            }
+
+            .text-2xl-responsive {
+                font-size: 1.25rem;
+            }
         }
 
         /* Icons */
@@ -197,14 +247,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M16.862 4.487l1.687 1.688a1.875 1.875 0 010 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                     </svg>
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Journal With Me</h1>
+                    <h1 class="text-2xl-responsive font-bold text-gray-900 dark:text-gray-100">Journal With Me</h1>
                 </div>
 
                 <!-- Today's Journal Card -->
                 <div class="journal-card rounded-2xl p-6 mb-8">
                     <div class="p-4">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold">Today's Reflection</h3>
+                            <h3 class="text-lg-responsive font-semibold">Today's Reflection</h3>
                             <span class="text-sm text-gray-500 dark:text-gray-400"
                                 x-text="new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })"></span>
                         </div>
@@ -218,29 +268,15 @@
 
                         <!-- Save Button -->
                         <div class="flex justify-end mt-4">
-                            <button @click="
-                                    if(entryContent.trim() && !entryContent.includes('text-gray-400')) {
-                                        const newEntry = {
-                                            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                                            content: entryContent,
-                                            timestamp: new Date().getTime()
-                                        };
-                                        savedEntries.unshift(newEntry);
-                                        localStorage.setItem('journalEntries', JSON.stringify(savedEntries));
-                                        entryContent = '';
-                                        $refs.journalEditor.innerHTML = '<span class=\'text-gray-400\'>✓ Entry saved! Write more or try another prompt.</span>';
-                                        activePrompt = null;
-                                    }
-                                " :class="{
+                            <button @click="saveEntry()" :class="{
                                     'bg-green-500 hover:bg-green-600 shadow-md': entryContent.trim() && !entryContent.includes('text-gray-400'),
                                     'bg-gray-300 cursor-not-allowed dark:bg-gray-600': !entryContent.trim() || entryContent.includes('text-gray-400')
                                 }"
                                 class="text-white font-medium py-2 px-6 rounded-lg transition-all flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="2">
+                                Save Entry <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                    stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
-                                Save Entry
                             </button>
                         </div>
                     </div>
@@ -248,7 +284,8 @@
 
                 <!-- Journal Prompts Grid -->
                 <div class="mt-8">
-                    <h2 class="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <h2
+                        class="text-xl-responsive font-semibold mb-6 text-gray-900 dark:text-gray-100 flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -257,11 +294,7 @@
                         Daily Prompts
                     </h2>
                     <div class="prompt-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div @click="
-                                activePrompt = 1;
-                                $refs.journalEditor.innerHTML = '<strong>What made you smile today?</strong><br><br>';
-                                $refs.journalEditor.focus();
-                            " :class="{
+                        <div @click="applyPrompt(1, 'What made you smile today?')" :class="{
                                 'border-green-500 bg-green-50/30 dark:bg-green-900/10 shadow-glow': activePrompt === 1,
                                 'border-transparent': activePrompt !== 1
                             }" class="journal-card prompt-card rounded-xl p-5 cursor-pointer border-2 transition-all">
@@ -273,17 +306,13 @@
                                         d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <div>
-                                    <h3 class="font-medium mb-1">What made you smile today?</h3>
+                                    <h3 class="font-medium mb-1 text-lg-responsive">What made you smile today?</h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">Reflect on positive moments</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div @click="
-                                activePrompt = 2;
-                                $refs.journalEditor.innerHTML = '<strong>What challenge did you overcome?</strong><br><br>';
-                                $refs.journalEditor.focus();
-                            " :class="{
+                        <div @click="applyPrompt(2, 'What challenge did you overcome?')" :class="{
                                 'border-green-500 bg-green-50/30 dark:bg-green-900/10 shadow-glow': activePrompt === 2,
                                 'border-transparent': activePrompt !== 2
                             }" class="journal-card prompt-card rounded-xl p-5 cursor-pointer border-2 transition-all">
@@ -295,17 +324,14 @@
                                         d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
                                 <div>
-                                    <h3 class="font-medium mb-1">What challenge did you overcome?</h3>
+                                    <h3 class="font-medium mb-1 text-lg-responsive">What challenge did you overcome?
+                                    </h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">Celebrate your resilience</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div @click="
-                                activePrompt = 3;
-                                $refs.journalEditor.innerHTML = '<strong>What are you grateful for?</strong><br><br>';
-                                $refs.journalEditor.focus();
-                            " :class="{
+                        <div @click="applyPrompt(3, 'What are you grateful for?')" :class="{
                                 'border-green-500 bg-green-50/30 dark:bg-green-900/10 shadow-glow': activePrompt === 3,
                                 'border-transparent': activePrompt !== 3
                             }" class="journal-card prompt-card rounded-xl p-5 cursor-pointer border-2 transition-all">
@@ -317,7 +343,7 @@
                                         d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                 </svg>
                                 <div>
-                                    <h3 class="font-medium mb-1">What are you grateful for?</h3>
+                                    <h3 class="font-medium mb-1 text-lg-responsive">What are you grateful for?</h3>
                                     <p class="text-sm text-gray-500 dark:text-gray-400">Practice gratitude</p>
                                 </div>
                             </div>
@@ -328,7 +354,8 @@
                 <!-- Previous Entries Section -->
                 <div class="mt-12" x-show="savedEntries.length > 0">
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                        <h2
+                            class="text-xl-responsive font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-green-500" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -336,8 +363,7 @@
                             </svg>
                             Your Journal Entries
                         </h2>
-                        <button
-                            @click="if(confirm('Clear all journal entries?')) { savedEntries = []; localStorage.removeItem('journalEntries'); }"
+                        <button @click="clearAllEntries()"
                             class="text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 flex items-center gap-1">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor" stroke-width="2">
@@ -359,8 +385,7 @@
                                         </svg>
                                         <h3 class="font-medium" x-text="entry.date"></h3>
                                     </div>
-                                    <button
-                                        @click="if(confirm('Delete this entry?')) { savedEntries.splice(index, 1); localStorage.setItem('journalEntries', JSON.stringify(savedEntries)); }"
+                                    <button @click="deleteEntry(index)"
                                         class="text-red-500 hover:text-red-700 dark:hover:text-red-400 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -378,6 +403,95 @@
             </section>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('journalApp', () => ({
+                // Default to light mode
+                dark: localStorage.getItem('dark') === 'true' || false,
+                entryContent: '',
+                savedEntries: [],
+                activePrompt: null,
+
+                init() {
+                    // Load saved entries from localStorage
+                    const saved = localStorage.getItem('journalEntries');
+                    this.savedEntries = saved ? JSON.parse(saved) : [];
+
+                    // Set up dark mode watcher
+                    this.$watch('dark', value => {
+                        localStorage.setItem('dark', value);
+                        if (value) {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
+                    });
+
+                    // Initialize dark mode state
+                    if (this.dark) {
+                        document.documentElement.classList.add('dark');
+                    }
+                },
+
+                applyPrompt(promptId, promptText) {
+                    this.activePrompt = promptId;
+                    this.$refs.journalEditor.innerHTML = `<strong>${promptText}</strong><br><br>`;
+                    this.entryContent = this.$refs.journalEditor.innerHTML;
+                    this.$refs.journalEditor.focus();
+
+                    // Move cursor to end (fixes typing direction)
+                    this.moveCursorToEnd(this.$refs.journalEditor);
+                },
+
+                moveCursorToEnd(element) {
+                    const range = document.createRange();
+                    const selection = window.getSelection();
+                    range.selectNodeContents(element);
+                    range.collapse(false); // false means move to end
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                },
+
+                saveEntry() {
+                    if (!this.entryContent.trim() || this.entryContent.includes('text-gray-400')) return;
+
+                    const newEntry = {
+                        date: new Date().toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                        }),
+                        content: this.entryContent,
+                        timestamp: new Date().getTime()
+                    };
+
+                    // Add to beginning of array (most recent first)
+                    this.savedEntries.unshift(newEntry);
+                    localStorage.setItem('journalEntries', JSON.stringify(this.savedEntries));
+
+                    // Reset editor
+                    this.entryContent = '';
+                    this.$refs.journalEditor.innerHTML = '<span class="text-gray-400">✓ Entry saved! Write more or try another prompt.</span>';
+                    this.activePrompt = null;
+                },
+
+                deleteEntry(index) {
+                    if (confirm('Delete this entry?')) {
+                        this.savedEntries.splice(index, 1);
+                        localStorage.setItem('journalEntries', JSON.stringify(this.savedEntries));
+                    }
+                },
+
+                clearAllEntries() {
+                    if (confirm('Clear all journal entries?')) {
+                        this.savedEntries = [];
+                        localStorage.removeItem('journalEntries');
+                    }
+                }
+            }));
+        });
+    </script>
 </body>
 
 </html>

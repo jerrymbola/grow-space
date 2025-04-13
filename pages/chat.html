@@ -1,45 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ 
-  dark: window.matchMedia('(prefers-color-scheme: dark)').matches,
-  activeTab: 'ai',
-  messages: [
-    { sender: 'ai', text: 'Hello there! I\'m Harmony. How are you feeling today?', time: '2:45 PM' },
-    { sender: 'user', text: 'I\'m feeling a bit overwhelmed with work lately.', time: '2:46 PM' },
-    { sender: 'ai', text: 'I hear you. It\'s completely normal to feel that way sometimes. Would you like to talk about what specifically is overwhelming you?', time: '2:46 PM' }
-  ],
-  newMessage: '',
-  sendMessage() {
-    if (this.newMessage.trim() === '') return;
-    this.messages.push({ 
-      sender: 'user', 
-      text: this.newMessage, 
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    });
-    this.newMessage = '';
-    // Scroll to bottom
-    setTimeout(() => {
-      const container = this.$refs.chatContainer;
-      container.scrollTop = container.scrollHeight;
-    }, 50);
-    // Simulate AI response after 1 second
-    setTimeout(() => {
-      this.messages.push({ 
-        sender: 'ai', 
-        text: 'Thanks for sharing that. Remember to take breaks and be kind to yourself during busy periods.', 
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      });
-      const container = this.$refs.chatContainer;
-      container.scrollTop = container.scrollHeight;
-    }, 1000);
-  }
-}" :class="{ 'dark': dark }">
+<html lang="en" x-data="chatApp()" :class="{ 'dark': dark }">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talk To Someone - b.you!</title>
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <title>Talk To Someone | b.you!</title>
     <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
@@ -62,6 +29,12 @@
                         secondary: {
                             light: '#f0fdf4',
                             dark: '#166534'
+                        },
+                        chat: {
+                            user: '#e0f2fe',
+                            bot: '#f0fdf4',
+                            darkuser: '#0369a1',
+                            darkbot: '#166534'
                         }
                     },
                     backdropBlur: {
@@ -70,12 +43,7 @@
                     },
                     boxShadow: {
                         glass: '0 4px 30px rgba(0, 0, 0, 0.1)',
-                    },
-                    screens: {
-                        'xs': '480px',
-                        'sm': '640px',
-                        'md': '768px',
-                        'lg': '992px',
+                        glow: '0 0 10px rgba(59, 130, 246, 0.3)'
                     },
                 },
             },
@@ -84,317 +52,575 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 50%, #f0f9ff 100%);
+            background-color: #f8fafc;
             min-height: 100vh;
+            margin: 0;
         }
 
         .dark body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0c4a6e 100%);
+            background-color: #0f172a;
         }
 
-        /* Enhanced glass card styling */
-        .glass-card {
+        /* Header */
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .sticky-header {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content-wrapper {
+            padding-top: 80px;
+            height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Chat Container */
+        .chat-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            height: 100%;
+        }
+
+        @media (min-width: 1024px) {
+            .chat-layout {
+                grid-template-columns: 300px 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Chat Selection */
+        .chat-selection {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            border-right: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .chat-selection {
+            border-right-color: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 1023px) {
+            .chat-selection {
+                display: none;
+            }
+        }
+
+        /* Chat Area */
+        .chat-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Messages Area */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            padding: 1rem;
+        }
+
+        /* Message Bubbles */
+        .message-bubble {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            margin-bottom: 0.75rem;
+            position: relative;
+            word-wrap: break-word;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .message-bubble {
+                font-size: 1rem;
+                line-height: 1.5rem;
+            }
+        }
+
+        .user-message {
+            background-color: #e0f2fe;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.25rem;
+        }
+
+        .dark .user-message {
+            background-color: #0369a1;
+            color: white;
+        }
+
+        .bot-message {
+            background-color: #f0fdf4;
+            align-self: flex-start;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .dark .bot-message {
+            background-color: #166534;
+            color: white;
+        }
+
+        /* Input Area - Always visible */
+        .input-container {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            position: sticky;
+            bottom: 0;
         }
 
-        .dark .glass-card {
+        .dark .input-container {
             background: rgba(15, 23, 42, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Card hover effects */
-        .card-hover {
-            transition: all 0.3s ease, transform 0.2s ease;
+        /* Chat Options */
+        .chat-option {
+            transition: all 0.2s ease;
+            font-size: 0.8125rem;
+            line-height: 1.125rem;
         }
 
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        @media (min-width: 640px) {
+            .chat-option {
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+            }
         }
 
-        /* Ensure proper touch targets */
-        a,
-        button {
-            min-width: 44px;
-            min-height: 44px;
-        }
-
-        /* Layout structure */
-        .page-container {
+        /* Chat Type Selector */
+        .chat-type-selector {
             display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
         }
 
-        .content-wrapper {
+        .dark .chat-type-selector {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-type-tab {
             flex: 1;
-            display: flex;
-            flex-direction: column;
+            text-align: center;
+            padding: 0.75rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
         }
 
-        /* Center toggle icon */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Chat bubbles */
-        .ai-bubble {
-            background: rgba(224, 242, 254, 0.7);
-            border-radius: 18px 18px 18px 4px;
-        }
-
-        .dark .ai-bubble {
-            background: rgba(3, 105, 161, 0.3);
-        }
-
-        .user-bubble {
-            background: rgba(240, 253, 244, 0.7);
-            border-radius: 18px 18px 4px 18px;
-        }
-
-        .dark .user-bubble {
-            background: rgba(22, 101, 52, 0.3);
-        }
-
-        /* Chat tabs */
-        .chat-tab {
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-
-        .chat-tab.active {
-            border-bottom-color: #3b82f6;
+        .chat-type-tab.active {
+            border-bottom-color: #ec4899;
             font-weight: 500;
         }
 
-        .dark .chat-tab.active {
-            border-bottom-color: #60a5fa;
+        /* Typing Indicator */
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #9ca3af;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out;
         }
 
-        /* Back button styling */
-        .back-button {
-            transition: all 0.3s ease;
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
         }
 
-        .back-button:hover {
-            transform: translateX(-3px);
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
         }
 
-        /* Scrollbar styling */
-        .chat-container::-webkit-scrollbar {
-            width: 6px;
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-6px);
+            }
         }
 
-        .chat-container::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        /* Mobile adjustments */
+        @media (max-width: 640px) {
+            .content-wrapper {
+                padding-top: 70px;
+                height: calc(100vh - 70px);
+            }
 
-        .chat-container::-webkit-scrollbar-thumb {
-            background-color: rgba(155, 155, 155, 0.3);
-            border-radius: 20px;
-        }
-
-        .dark .chat-container::-webkit-scrollbar-thumb {
-            background-color: rgba(85, 85, 85, 0.5);
+            .message-bubble {
+                max-width: 90%;
+                padding: 0.625rem 0.875rem;
+            }
         }
     </style>
 </head>
 
 <body class="font-sans transition-colors duration-300 text-gray-800 dark:text-gray-100">
     <div class="page-container">
-        <!-- Navbar -->
-        <header class="py-4 px-6 lg:px-[3.5rem] w-full max-w-7xl mx-auto">
-            <div class="flex items-center justify-between">
-                <a href="../index.html" class="back-button flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        <!-- Sticky Navbar -->
+        <header class="sticky-header py-4 w-full">
+            <div class="flex items-center justify-between px-6 lg:px-[3.5rem] max-w-7xl mx-auto">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html"
+                        class="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span class="text-2xl font-bold tracking-wide text-gray-900 dark:text-gray-100">b.you!</span>
+                    </a>
+                </div>
+                <button @click="dark = !dark" aria-label="Toggle dark mode" aria-pressed="false"
+                    x-bind:aria-pressed="dark"
+                    class="theme-toggle glass-card hover:bg-white/30 dark:hover:bg-black/30 w-12 h-12 rounded-full flex items-center justify-center focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="sun h-6 w-6 text-yellow-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h1 class="text-2xl font-bold tracking-wide">b.you!</h1>
-                </a>
-                <button @click="dark = !dark" aria-label="Toggle dark mode"
-                    class="glass-card rounded-full p-2 hover:bg-white/30 dark:hover:bg-black/30 transition toggle-container">
-                    <template x-if="dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-300" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </template>
-                    <template x-if="!dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
-                        </svg>
-                    </template>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="moon h-6 w-6 text-blue-800" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
+                    </svg>
                 </button>
             </div>
         </header>
 
         <div class="content-wrapper">
-            <!-- Main Content -->
-            <main class="flex-1 w-full max-w-4xl mx-auto px-6 py-8 lg:px-8">
-                <div class="glass-card rounded-2xl p-6 md:p-8">
-                    <div class="flex justify-between items-start mb-6">
-                        <h2
-                            class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
-                            <svg class="w-8 h-8 text-pink-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M7.5 12h.008v.008H7.5V12zm4.5 0h.008v.008H12V12zm4.5 0h.008v.008H16.5V12zm1.125 7.125A9.004 9.004 0 013 12c0-4.97 4.03-9 9-9s9 4.03 9 9c0 1.61-.424 3.122-1.167 4.434a.75.75 0 00-.083.582l.54 2.162a.375.375 0 01-.482.447l-2.162-.54a.75.75 0 00-.582.083z" />
-                            </svg>
-                            Talk To Someone
-                        </h2>
-                    </div>
+            <div class="chat-layout">
+                <!-- Chat Selection Sidebar (Desktop) -->
+                <div class="chat-selection" x-show="isDesktop">
+                    <h2 class="text-lg font-semibold mb-4">Choose who to talk with</h2>
 
-                    <!-- Chat Tabs -->
-                    <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6">
-                        <button @click="activeTab = 'ai'"
-                            :class="{ 'active': activeTab === 'ai', 'text-gray-500 dark:text-gray-400': activeTab !== 'ai' }"
-                            class="chat-tab px-4 py-2 text-gray-900 dark:text-gray-100">
-                            Chat with Harmony AI
-                        </button>
-                        <button @click="activeTab = 'community'"
-                            :class="{ 'active': activeTab === 'community', 'text-gray-500 dark:text-gray-400': activeTab !== 'community' }"
-                            class="chat-tab px-4 py-2 text-gray-900 dark:text-gray-100">
-                            Community Support
-                        </button>
-                    </div>
-
-                    <!-- AI Chat Interface -->
-                    <div x-show="activeTab === 'ai'" class="transition-all duration-300">
-                        <div class="glass-card rounded-2xl p-4 mb-6">
-                            <div class="flex items-center gap-3 p-3">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-pink-100 dark:bg-pink-900 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-pink-500" fill="none" stroke="currentColor"
-                                        stroke-width="1.5" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-medium text-gray-900 dark:text-gray-100">Harmony AI</h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400">Always here to listen</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Chat Messages -->
-                        <div x-ref="chatContainer"
-                            class="chat-container glass-card rounded-2xl p-4 mb-4 h-96 overflow-y-auto">
-                            <template x-for="(message, index) in messages" :key="index">
-                                <div
-                                    :class="{ 'flex justify-end': message.sender === 'user', 'mb-4': index < messages.length - 1 }">
-                                    <div :class="{ 'ai-bubble': message.sender === 'ai', 'user-bubble': message.sender === 'user' }"
-                                        class="max-w-xs xs:max-w-sm md:max-w-md lg:max-w-lg px-4 py-2 mb-2">
-                                        <p x-text="message.text" class="text-gray-800 dark:text-gray-200"></p>
-                                        <p x-text="message.time"
-                                            class="text-xs text-right mt-1 text-gray-500 dark:text-gray-400"></p>
-                                    </div>
-                                </div>
-                            </template>
-                        </div>
-
-                        <!-- Message Input -->
-                        <div class="flex gap-2">
-                            <input x-model="newMessage" @keyup.enter="sendMessage"
-                                class="flex-1 glass-card rounded-full px-4 py-3 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none"
-                                placeholder="Type your message...">
-                            <button @click="sendMessage"
-                                class="glass-card rounded-full p-3 bg-pink-500 hover:bg-pink-600 text-white transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    <div class="space-y-4">
+                        <!-- AI Chat Option -->
+                        <button @click="selectChatType('ai')" class="w-full p-4 rounded-lg text-left transition-colors"
+                            :class="{
+                                'bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800': chatType === 'ai',
+                                'glass-card hover:shadow-glow': chatType !== 'ai'
+                            }">
+                            <div class="flex items-center gap-3">
+                                <svg aria-hidden="true" class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
                                 </svg>
-                            </button>
-                        </div>
+                                <div>
+                                    <h3 class="font-medium">AI Companion</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Always available to chat</p>
+                                </div>
+                            </div>
+                        </button>
+
+                        <!-- Community Chat Option -->
+                        <button @click="selectChatType('community')"
+                            class="w-full p-4 rounded-lg text-left transition-colors" :class="{
+                                'bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800': chatType === 'community',
+                                'glass-card hover:shadow-glow': chatType !== 'community'
+                            }">
+                            <div class="flex items-center gap-3">
+                                <svg aria-hidden="true" class="w-6 h-6 text-green-500" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                </svg>
+                                <div>
+                                    <h3 class="font-medium">Community Chat</h3>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">Connect with real people</p>
+                                </div>
+                            </div>
+                        </button>
                     </div>
 
-                    <!-- Community Support Interface -->
-                    <div x-show="activeTab === 'community'" class="transition-all duration-300">
-                        <div class="glass-card rounded-2xl p-6 mb-6">
-                            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Connect with Others
-                            </h3>
-                            <p class="text-gray-700 dark:text-gray-300 mb-6">Join our supportive community to share
-                                experiences and find understanding listeners.</p>
+                    <!-- Community Info -->
+                    <div x-show="chatType === 'community'"
+                        class="mt-6 p-4 rounded-lg bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/20">
+                        <h3 class="font-medium mb-2">About Community Chat</h3>
+                        <p class="text-sm">Connect with other members of our supportive community. Our online members
+                            are here to listen and share.</p>
+                    </div>
 
-                            <div class="grid grid-cols-1 xs:grid-cols-2 gap-4 mb-6">
-                                <!-- Support Group 1 -->
-                                <div class="glass-card rounded-xl p-4 card-hover">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor"
-                                                stroke-width="1.5" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-900 dark:text-gray-100">Anxiety Support
-                                            </h4>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">12 members online</p>
-                                        </div>
-                                    </div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">A safe space to
-                                        discuss anxiety and coping strategies with others who understand.</p>
-                                    <button
-                                        class="mt-3 w-full text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">
-                                        Join Group
-                                    </button>
-                                </div>
-
-                                <!-- Support Group 2 -->
-                                <div class="glass-card rounded-xl p-4 card-hover">
-                                    <div class="flex items-center gap-3 mb-3">
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
-                                                stroke-width="1.5" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15.182 15.182a4.5 4.5 0 01-6.364 0M21 12a9 9 0 11-18 0 9 9 0 0118 0zM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75zm-.375 0h.008v.015h-.008V9.75zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75zm-.375 0h.008v.015h-.008V9.75z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h4 class="font-medium text-gray-900 dark:text-gray-100">Happy Hour</h4>
-                                            <p class="text-xs text-gray-500 dark:text-gray-400">24 members online</p>
-                                        </div>
-                                    </div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">Share positive
-                                        moments and celebrate small wins with this uplifting community.</p>
-                                    <button
-                                        class="mt-3 w-full text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg transition">
-                                        Join Group
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="glass-card rounded-xl p-4 card-hover">
-                                <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-3">Find a Listening Partner
-                                </h4>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Connect one-on-one with someone
-                                    who's available to listen right now.</p>
-                                <button
-                                    class="w-full bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition">
-                                    Match Me With a Listener
-                                </button>
-                            </div>
-                        </div>
+                    <!-- AI Info -->
+                    <div x-show="chatType === 'ai'"
+                        class="mt-6 p-4 rounded-lg bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20">
+                        <h3 class="font-medium mb-2">About AI Companion</h3>
+                        <p class="text-sm">Our AI companion is always available to chat, offering a judgment-free space
+                            to share your thoughts.</p>
                     </div>
                 </div>
-            </main>
+
+                <!-- Main Chat Area -->
+                <div class="chat-area">
+                    <!-- Chat Type Selector (Mobile) -->
+                    <div class="chat-type-selector" x-show="!isDesktop">
+                        <div @click="selectChatType('ai')" class="chat-type-tab"
+                            :class="{ 'active': chatType === 'ai' }">
+                            AI Companion
+                        </div>
+                        <div @click="selectChatType('community')" class="chat-type-tab"
+                            :class="{ 'active': chatType === 'community' }">
+                            Community
+                        </div>
+                    </div>
+
+                    <!-- Chat Header -->
+                    <div class="flex items-center gap-4 px-6 pt-6">
+                        <svg aria-hidden="true" class="w-8 h-8 text-pink-500" fill="none" stroke="currentColor"
+                            stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                        </svg>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100"
+                            x-text="chatType === 'ai' ? 'AI Companion' : 'Community Chat'"></h1>
+                    </div>
+
+                    <!-- Introduction -->
+                    <div class="mb-6 p-4 mx-6 rounded-xl"
+                        :class="chatType === 'ai' ? 'bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/20' : 'bg-green-50/50 dark:bg-green-900/10 border border-green-100 dark:border-green-900/20'">
+                        <p x-show="chatType === 'ai'" class="text-blue-800 dark:text-blue-200">Need someone to talk to?
+                            I'm here to listen and chat with you about anything on your mind.</p>
+                        <p x-show="chatType === 'community'" class="text-green-800 dark:text-green-200">Connect with
+                            supportive community members. Please be kind and respectful in your conversations.</p>
+                    </div>
+
+                    <!-- Messages Area -->
+                    <div class="messages-container space-y-3" id="messages">
+                        <!-- Welcome Message -->
+                        <div class="message-bubble bot-message" x-show="chatType === 'ai'">
+                            <p>Hi there! 👋 I'm your AI companion, always available to chat. You can talk to me about
+                                anything that's on your mind - your day, your thoughts, or anything you'd like to share.
+                                What would you like to talk about?</p>
+                        </div>
+
+                        <div class="message-bubble bot-message" x-show="chatType === 'community'">
+                            <p>Welcome to our community chat! 👋 You'll be connected with another community member
+                                shortly. While you wait, feel free to share what's on your mind.</p>
+                        </div>
+
+                        <!-- Quick Options -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 px-4">
+                            <template x-if="chatType === 'ai'">
+                                <button @click="sendQuickMessage('I just want to chat')"
+                                    class="chat-option glass-card p-3 rounded-lg text-left hover:shadow-glow focus:outline-none">
+                                    <p>I just want to chat</p>
+                                </button>
+                            </template>
+                            <template x-if="chatType === 'ai'">
+                                <button @click="sendQuickMessage('I need advice about something')"
+                                    class="chat-option glass-card p-3 rounded-lg text-left hover:shadow-glow focus:outline-none">
+                                    <p>I need advice about something</p>
+                                </button>
+                            </template>
+                            <template x-if="chatType === 'community'">
+                                <button @click="sendQuickMessage('Looking for someone to talk to')"
+                                    class="chat-option glass-card p-3 rounded-lg text-left hover:shadow-glow focus:outline-none">
+                                    <p>Looking for someone to talk to</p>
+                                </button>
+                            </template>
+                            <template x-if="chatType === 'community'">
+                                <button @click="sendQuickMessage('I need support with something')"
+                                    class="chat-option glass-card p-3 rounded-lg text-left hover:shadow-glow focus:outline-none">
+                                    <p>I need support with something</p>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Input Area - Always visible -->
+                    <div class="input-container">
+                        <form @submit.prevent="sendMessage()" class="flex gap-2">
+                            <input x-model="message" type="text" placeholder="Type your message here..."
+                                class="flex-1 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                                @keydown.enter="sendMessage()">
+                            <button type="submit"
+                                class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2">
+                                Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('chatApp', () => ({
+                dark: localStorage.getItem('dark') === 'true',
+                message: '',
+                messages: [],
+                loading: false,
+                chatType: 'ai', // 'ai' or 'community'
+                isDesktop: window.innerWidth >= 1024,
+                apiKey: '', // You'll need to set this or get it from user input
+
+                init() {
+                    // Initialize dark mode from localStorage
+                    this.$watch('dark', value => {
+                        localStorage.setItem('dark', value);
+                        if (value) {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
+                    });
+
+                    // Check screen size
+                    window.addEventListener('resize', () => {
+                        this.isDesktop = window.innerWidth >= 1024;
+                    });
+
+                    // Initialize chat based on type
+                    this.initializeChat();
+
+                    // Scroll to bottom of messages
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                    });
+                },
+
+                selectChatType(type) {
+                    this.chatType = type;
+                    this.initializeChat();
+                },
+
+                initializeChat() {
+                    this.messages = [];
+                    if (this.chatType === 'ai') {
+                        this.messages.push({
+                            text: "Hi there! 👋 I'm your AI companion, always available to chat. You can talk to me about anything that's on your mind - your day, your thoughts, or anything you'd like to share. What would you like to talk about?",
+                            sender: 'bot'
+                        });
+                    } else {
+                        this.messages.push({
+                            text: "Welcome to our community chat! 👋 You'll be connected with another community member shortly. While you wait, feel free to share what's on your mind.",
+                            sender: 'bot'
+                        });
+                    }
+                },
+
+                sendQuickMessage(text) {
+                    this.message = text;
+                    this.sendMessage();
+                },
+
+                async sendMessage() {
+                    if (!this.message.trim()) return;
+
+                    const userMessage = this.message;
+                    this.messages.push({ text: userMessage, sender: 'user' });
+                    this.message = '';
+
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                        this.showTypingIndicator();
+                    });
+
+                    try {
+                        if (this.chatType === 'ai') {
+                            // Call Gemini API for AI chat
+                            const response = await this.callGeminiAPI(userMessage);
+                            this.addBotMessage(response);
+                        } else {
+                            // Simulate community response
+                            setTimeout(() => {
+                                this.addBotMessage("Thanks for your message! A community member will respond shortly.");
+                            }, 2000);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        this.addBotMessage("I'm having trouble connecting right now. Please try again later.");
+                    }
+                },
+
+                async callGeminiAPI(prompt) {
+                    // In a real implementation, you would call the Gemini API here
+                    // This is a mock implementation that simulates API responses
+
+                    // Simulate API delay
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+
+                    // Simple response logic based on user input
+                    const lowerMessage = prompt.toLowerCase();
+
+                    if (lowerMessage.includes('advice')) {
+                        return "I'm happy to offer advice. Could you tell me more about the situation you're seeking advice on? The more context you provide, the better I can help.";
+                    }
+                    else if (lowerMessage.includes('uplifting') || lowerMessage.includes('encouragement')) {
+                        const upliftingMessages = [
+                            "Remember that every day is a fresh start. You've overcome 100% of your bad days so far!",
+                            "You are capable of more than you know. Trust in your ability to grow and adapt.",
+                            "Progress isn't always linear. Celebrate the small wins along your journey."
+                        ];
+                        return upliftingMessages[Math.floor(Math.random() * upliftingMessages.length)];
+                    }
+                    else if (lowerMessage.includes('decision')) {
+                        return "When facing a decision, it can help to list the pros and cons of each option. Would you like to talk through the options you're considering?";
+                    }
+                    else {
+                        const responses = [
+                            "I hear you. Would you like to tell me more about that?",
+                            "Thanks for sharing. What else is on your mind?",
+                            "I'm here to listen. How has your day been so far?",
+                            "That's interesting. Can you elaborate on that?"
+                        ];
+                        return responses[Math.floor(Math.random() * responses.length)];
+                    }
+                },
+
+                addBotMessage(text) {
+                    // Remove typing indicator
+                    const typingIndicator = document.querySelector('.typing-indicator');
+                    if (typingIndicator) {
+                        typingIndicator.remove();
+                    }
+
+                    this.messages.push({ text, sender: 'bot' });
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                    });
+                },
+
+                showTypingIndicator() {
+                    const typingElement = document.createElement('div');
+                    typingElement.className = 'message-bubble bot-message typing-indicator';
+                    typingElement.innerHTML = '<span></span><span></span><span></span>';
+
+                    const messagesContainer = document.getElementById('messages');
+                    messagesContainer.appendChild(typingElement);
+                    this.scrollToBottom();
+                },
+
+                scrollToBottom() {
+                    const messagesContainer = document.getElementById('messages');
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+            }));
+        });
+    </script>
 </body>
 
 </html>
