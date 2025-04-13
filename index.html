@@ -44,13 +44,32 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        /* Animated Background Gradient */
         body {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 50%, #f0f9ff 100%);
+            background: linear-gradient(-45deg, #f0fdfa, #ecfdf5, #f0f9ff, #e0f2fe);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
             min-height: 100vh;
         }
 
         .dark body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0c4a6e 100%);
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #0c4a6e, #0369a1);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         /* Enhanced glass card styling */
@@ -67,14 +86,110 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Floating Card Animation */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .floating-card {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-card:nth-child(2) {
+            animation-delay: 1s;
+        }
+
+        .floating-card:nth-child(3) {
+            animation-delay: 2s;
+        }
+
+        .floating-card:nth-child(4) {
+            animation-delay: 3s;
+        }
+
         /* Card hover effects */
         .card-hover {
             transition: all 0.3s ease, transform 0.2s ease;
         }
 
         .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Ripple Effect */
+        .ripple-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple 600ms linear;
+            pointer-events: none;
+        }
+
+        .dark .ripple-effect {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Theme Toggle Animation */
+        .theme-toggle {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .theme-toggle svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle .sun {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        .theme-toggle .moon {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .dark .theme-toggle .sun {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .dark .theme-toggle .moon {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
         }
 
         /* Ensure proper touch targets */
@@ -163,21 +278,17 @@
             <div class="flex items-center justify-between px-6 lg:px-[3.5rem] max-w-7xl mx-auto">
                 <h1 class="text-2xl font-bold tracking-wide text-gray-900 dark:text-gray-100">b.you!</h1>
                 <button @click="dark = !dark" aria-label="Toggle dark mode"
-                    class="glass-card rounded-full p-2 hover:bg-white/30 dark:hover:bg-black/30 transition toggle-container">
-                    <template x-if="dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-300" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </template>
-                    <template x-if="!dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
-                        </svg>
-                    </template>
+                    class="theme-toggle glass-card hover:bg-white/30 dark:hover:bg-black/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="sun h-6 w-6 text-yellow-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="moon h-6 w-6 text-blue-800" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
+                    </svg>
                 </button>
             </div>
         </header>
@@ -188,7 +299,7 @@
             <section class="hero-section flex flex-col justify-center items-center text-center px-6">
                 <div class="max-w-3xl mx-auto">
                     <h1 class="hero-title text-3xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                        Take a deep breath. You're growing, not failing
+                        Take a deep breath. You're growing, not failing.
                     </h1>
                     <p class="hero-subtitle text-lg md:text-2xl text-gray-700 dark:text-gray-300">
                         Welcome to your daily space of peace, purpose, and progress.
@@ -201,7 +312,7 @@
                 <div
                     class="grid grid-cols-2 min-[480px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     <a href="./pages/daily-boost.html" aria-label="Daily Boost"
-                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" fill="none" stroke="currentColor"
@@ -216,7 +327,7 @@
                     </a>
 
                     <a href="./pages/journal.html" aria-label="Journal With Me"
-                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor"
@@ -231,7 +342,7 @@
                     </a>
 
                     <a href="./pages/resources.html" aria-label="Grow Your Mind"
-                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" fill="none" stroke="currentColor"
@@ -246,7 +357,7 @@
                     </a>
 
                     <a href="./pages/chat.html" aria-label="Talk To Someone"
-                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        class="floating-card ripple-container card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
                         <h2
                             class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" fill="none" stroke="currentColor"
@@ -263,6 +374,63 @@
             </section>
         </div>
     </div>
+
+    <script>
+        // Typing Animation for Hero Text
+        document.addEventListener('DOMContentLoaded', function () {
+            const heroTitle = document.querySelector('.hero-title');
+            const phrases = [
+                "Take a deep breath. You're growing, not failing.",
+                "Progress, not perfection.",
+                "One step at a time.",
+                "You're exactly where you need to be."
+            ];
+            let currentPhrase = 0;
+
+            function typeWriter(text, i, fnCallback) {
+                if (i < text.length) {
+                    heroTitle.innerHTML = text.substring(0, i + 1) + '<span class="text-transparent">|</span>';
+                    setTimeout(function () {
+                        typeWriter(text, i + 1, fnCallback)
+                    }, 100);
+                } else if (typeof fnCallback == 'function') {
+                    setTimeout(fnCallback, 2000);
+                }
+            }
+
+            function startTextAnimation() {
+                typeWriter(phrases[currentPhrase], 0, function () {
+                    currentPhrase = (currentPhrase + 1) % phrases.length;
+                    setTimeout(startTextAnimation, 500);
+                });
+            }
+
+            // Start the text animation
+            startTextAnimation();
+
+            // Ripple Effect for Cards
+            const cards = document.querySelectorAll('.ripple-container');
+
+            cards.forEach(card => {
+                card.addEventListener('click', function (e) {
+                    const rect = this.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple-effect');
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+
+                    this.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
