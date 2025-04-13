@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ dark: window.matchMedia('(prefers-color-scheme: dark)').matches }" :class="{ 'dark': dark }">
+<html lang="en" x-data="{ dark: false }" :class="{ 'dark': dark }">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Boost - b.you!</title>
-    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <title>Daily Boost | b.you!</title>
     <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
@@ -38,237 +38,208 @@
                     boxShadow: {
                         glass: '0 4px 30px rgba(0, 0, 0, 0.1)',
                     },
-                    screens: {
-                        'xs': '480px',
-                        'sm': '640px',
-                        'md': '768px',
-                        'lg': '992px',
-                    },
                 },
             },
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        /* Match index.html styles */
         body {
-            background: linear-gradient(135deg, #f0fdfa 0%, #ecfdf5 50%, #f0f9ff 100%);
+            background-color: #f8fafc;
             min-height: 100vh;
+            margin: 0;
         }
 
         .dark body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0c4a6e 100%);
+            background-color: #0f172a;
         }
 
-        /* Enhanced glass card styling */
-        .glass-card {
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .sticky-header {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .content-wrapper {
+            padding-top: 80px;
+        }
+
+        /* Daily Boost Card Styles */
+        .boost-card {
             background: rgba(255, 255, 255, 0.25);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
-        .dark .glass-card {
+        .dark .boost-card {
             background: rgba(15, 23, 42, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Card hover effects */
-        .card-hover {
-            transition: all 0.3s ease, transform 0.2s ease;
-        }
-
-        .card-hover:hover {
+        .boost-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
-        /* Ensure proper touch targets */
-        a,
-        button {
-            min-width: 44px;
-            min-height: 44px;
+        /* Responsive Typography */
+        .boost-text {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            line-height: 1.5;
         }
 
-        /* Layout structure */
-        .page-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        .boost-author {
+            font-size: clamp(0.75rem, 2vw, 1rem);
         }
 
-        .content-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
+        /* Mobile adjustments */
+        @media (max-width: 640px) {
+            .content-wrapper {
+                padding-top: 70px;
+            }
 
-        /* Center toggle icon */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Quote styling */
-        .quote-mark {
-            font-family: Georgia, serif;
-            font-size: 4rem;
-            line-height: 1;
-            opacity: 0.25;
-        }
-
-        /* Back button styling */
-        .back-button {
-            transition: all 0.3s ease;
-        }
-
-        .back-button:hover {
-            transform: translateX(-3px);
+            .card-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
         }
     </style>
 </head>
 
 <body class="font-sans transition-colors duration-300 text-gray-800 dark:text-gray-100">
     <div class="page-container">
-        <!-- Navbar -->
-        <header class="py-4 px-6 lg:px-[3.5rem] w-full max-w-7xl mx-auto">
-            <div class="flex items-center justify-between">
-                <a href="../index.html" class="back-button flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    <h1 class="text-2xl font-bold tracking-wide">b.you!</h1>
-                </a>
+        <!-- Sticky Navbar with Back Button -->
+        <header class="sticky-header py-4 w-full">
+            <div class="flex items-center justify-between px-6 lg:px-[3.5rem] max-w-7xl mx-auto">
+                <div class="flex items-center gap-4">
+                    <a href="../index.html"
+                        class="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        <span class="text-2xl font-bold tracking-wide text-gray-900 dark:text-gray-100">b.you!</span>
+                    </a>
+                </div>
                 <button @click="dark = !dark" aria-label="Toggle dark mode"
-                    class="glass-card rounded-full p-2 hover:bg-white/30 dark:hover:bg-black/30 transition toggle-container">
-                    <template x-if="dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-300" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </template>
-                    <template x-if="!dark">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-800" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
-                        </svg>
-                    </template>
+                    class="theme-toggle glass-card hover:bg-white/30 dark:hover:bg-black/30 w-12 h-12 rounded-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="sun h-6 w-6 text-yellow-300" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="moon h-6 w-6 text-blue-800" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
+                    </svg>
                 </button>
             </div>
         </header>
 
         <div class="content-wrapper">
-            <!-- Main Content -->
-            <main class="flex-1 w-full max-w-4xl mx-auto px-6 py-8 lg:px-8">
-                <div class="glass-card rounded-2xl p-6 md:p-8 mb-8">
-                    <div class="flex justify-between items-start mb-6">
-                        <h2
-                            class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
-                            <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 4.5v-2m0 19v-2m8-7h2m-19 0h2m13.364 6.364l1.414-1.414M5.636 5.636L4.222 4.222m13.364-1.414l1.414 1.414M5.636 18.364l-1.414 1.414" />
-                            </svg>
-                            Daily Boost
-                        </h2>
-                        <span class="text-sm text-gray-500 dark:text-gray-400">April 13, 2025</span>
-                    </div>
+            <!-- Daily Boost Content -->
+            <section class="w-full max-w-7xl mx-auto px-6 lg:px-[3.5rem] py-10">
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-8">
+                    <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" stroke-width="1.5"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                    </svg>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">Daily Boost</h1>
+                </div>
 
-                    <!-- Quote of the Day -->
-                    <div class="glass-card rounded-2xl p-6 mb-8">
-                        <div class="relative">
-                            <span class="quote-mark absolute -top-2 -left-2">"</span>
-                            <blockquote
-                                class="text-xl md:text-2xl italic pl-8 pr-4 py-2 text-gray-800 dark:text-gray-200">
-                                Growth is never by mere chance; it is the result of forces working together. Your daily
-                                efforts, no matter how small, are compounding into something greater.
-                            </blockquote>
-                            <span class="quote-mark absolute -bottom-8 -right-2">"</span>
+                <!-- Current Boost Card -->
+                <div class="boost-card rounded-2xl p-6 mb-8">
+                    <div class="text-center p-4">
+                        <p class="boost-text font-medium mb-4">"You are capable of amazing things. Today is your day to
+                            shine."</p>
+                        <p class="boost-author text-gray-600 dark:text-gray-300">- Your Future Self</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-4 justify-center mb-12">
+                    <button
+                        class="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-6 rounded-lg transition-colors text-sm md:text-base">
+                        New Boost
+                    </button>
+                    <button
+                        class="border border-yellow-500 text-yellow-500 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/30 font-medium py-2 px-6 rounded-lg transition-colors text-sm md:text-base">
+                        Save to Favorites
+                    </button>
+                    <button
+                        class="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 font-medium py-2 px-6 rounded-lg transition-colors text-sm md:text-base">
+                        Share Boost
+                    </button>
+                </div>
+
+                <!-- Previous Boosts Grid -->
+                <div class="mt-12">
+                    <h2 class="text-xl font-semibold mb-6 text-gray-900 dark:text-gray-100">Previous Boosts</h2>
+                    <div class="card-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Boost Card 1 -->
+                        <div class="boost-card rounded-xl p-5 cursor-pointer">
+                            <p class="boost-text mb-3">"Progress is progress, no matter how small."</p>
+                            <p class="boost-author text-gray-500 dark:text-gray-400">Yesterday</p>
                         </div>
-                        <p class="text-right mt-6 text-gray-600 dark:text-gray-300">— James Cash Penney</p>
-                    </div>
 
-                    <!-- Affirmation -->
-                    <div class="glass-card rounded-2xl p-6 mb-8">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            Today's Affirmation
-                        </h3>
-                        <p class="text-lg md:text-xl pl-7 text-gray-800 dark:text-gray-200">
-                            I am capable of overcoming any challenge that comes my way. Each step I take moves me closer
-                            to my goals.
-                        </p>
-                    </div>
+                        <!-- Boost Card 2 -->
+                        <div class="boost-card rounded-xl p-5 cursor-pointer">
+                            <p class="boost-text mb-3">"Challenges are what make life interesting."</p>
+                            <p class="boost-author text-gray-500 dark:text-gray-400">2 days ago</p>
+                        </div>
 
-                    <!-- Action Prompt -->
-                    <div class="glass-card rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
-                            Small Action for Today
-                        </h3>
-                        <p class="text-gray-800 dark:text-gray-200 mb-4 pl-7">
-                            Take 5 minutes to write down one thing you're grateful for and one small step you can take
-                            today toward a personal goal.
-                        </p>
-                        <button
-                            class="ml-7 mt-3 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">
-                            I Did This Today
-                        </button>
+                        <!-- Boost Card 3 -->
+                        <div class="boost-card rounded-xl p-5 cursor-pointer">
+                            <p class="boost-text mb-3">"Believe you can and you're halfway there."</p>
+                            <p class="boost-author text-gray-500 dark:text-gray-400">3 days ago</p>
+                        </div>
+
+                        <!-- Boost Card 4 -->
+                        <div class="boost-card rounded-xl p-5 cursor-pointer">
+                            <p class="boost-text mb-3">"Your potential is endless. Go get what's yours."</p>
+                            <p class="boost-author text-gray-500 dark:text-gray-400">4 days ago</p>
+                        </div>
+
+                        <!-- Boost Card 5 -->
+                        <div class="boost-card rounded-xl p-5 cursor-pointer">
+                            <p class="boost-text mb-3">"Small steps every day lead to big results."</p>
+                            <p class="boost-author text-gray-500 dark:text-gray-400">5 days ago</p>
+                        </div>
+
+                        <!-- Boost Card 6 -->
+                        <div class="boost-card rounded-xl p-5 cursor-pointer">
+                            <p class="boost-text mb-3">"You're stronger than you think you are."</p>
+                            <p class="boost-author text-gray-500 dark:text-gray-400">1 week ago</p>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Previous Boosts -->
-                <div class="glass-card rounded-2xl p-6">
-                    <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Previous Daily Boosts</h3>
-                    <div class="grid grid-cols-1 xs:grid-cols-2 gap-4">
-                        <!-- Boost 1 -->
-                        <a href="#" class="card-hover glass-card rounded-xl p-4">
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">April 12</p>
-                            <p class="text-gray-800 dark:text-gray-200 line-clamp-2">"The only limit to our realization
-                                of tomorrow is our doubts of today." — Franklin D. Roosevelt</p>
-                        </a>
-
-                        <!-- Boost 2 -->
-                        <a href="#" class="card-hover glass-card rounded-xl p-4">
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">April 11</p>
-                            <p class="text-gray-800 dark:text-gray-200 line-clamp-2">"You don't have to be great to
-                                start, but you have to start to be great." — Zig Ziglar</p>
-                        </a>
-
-                        <!-- Boost 3 -->
-                        <a href="#" class="card-hover glass-card rounded-xl p-4">
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">April 10</p>
-                            <p class="text-gray-800 dark:text-gray-200 line-clamp-2">"Success is the sum of small
-                                efforts repeated day in and day out." — Robert Collier</p>
-                        </a>
-
-                        <!-- Boost 4 -->
-                        <a href="#" class="card-hover glass-card rounded-xl p-4">
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">April 9</p>
-                            <p class="text-gray-800 dark:text-gray-200 line-clamp-2">"The future depends on what you do
-                                today." — Mahatma Gandhi</p>
-                        </a>
-                    </div>
-                    <a href="#"
-                        class="inline-block mt-4 text-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition">View
-                        all previous boosts →</a>
-                </div>
-            </main>
+            </section>
         </div>
     </div>
+
+    <script>
+        // You can add functionality here later
+        document.addEventListener('DOMContentLoaded', function () {
+            // Future functionality for generating new boosts
+        });
+    </script>
 </body>
 
 </html>
