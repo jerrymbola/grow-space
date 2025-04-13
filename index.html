@@ -47,13 +47,11 @@
         /* Solid Background Colors */
         body {
             background-color: #f8fafc;
-            /* Light mode background */
             min-height: 100vh;
         }
 
         .dark body {
             background-color: #0f172a;
-            /* Dark mode background */
         }
 
         /* Enhanced glass card styling */
@@ -63,6 +61,7 @@
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
         .dark .glass-card {
@@ -70,43 +69,10 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Floating Card Animation */
-        @keyframes float {
-
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-10px);
-            }
-        }
-
-        .floating-card {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .floating-card:nth-child(2) {
-            animation-delay: 1s;
-        }
-
-        .floating-card:nth-child(3) {
-            animation-delay: 2s;
-        }
-
-        .floating-card:nth-child(4) {
-            animation-delay: 3s;
-        }
-
         /* Card hover effects */
-        .card-hover {
-            transition: all 0.3s ease, transform 0.2s ease;
-        }
-
         .card-hover:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
         }
 
         /* Theme Toggle Animation */
@@ -148,6 +114,17 @@
         .dark .theme-toggle .moon {
             opacity: 0;
             transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        /* Card content alignment */
+        .card-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .card-text-wrapper {
+            flex: 1;
         }
 
         /* Ensure proper touch targets */
@@ -192,23 +169,36 @@
         }
 
         /* Mobile adjustments */
-        @media (max-width: 480px) {
+        @media (max-width: 556px) {
             .content-wrapper {
                 padding-top: 70px;
             }
 
-            .hero-section {
-                padding-top: 1rem;
-            }
-
             .hero-title {
-                font-size: 1.75rem;
-                line-height: 2.25rem;
+                font-size: 1.5rem;
+                line-height: 2rem;
             }
 
             .hero-subtitle {
-                font-size: 1.125rem;
-                line-height: 1.75rem;
+                font-size: 1rem;
+                line-height: 1.5rem;
+            }
+
+            /* Card content adjustments */
+            .card-title {
+                font-size: 0.75rem;
+                line-height: 1rem;
+            }
+
+            .card-text {
+                font-size: 0.6875rem;
+                line-height: 0.875rem;
+            }
+
+            .card-icon {
+                width: 16px;
+                height: 16px;
+                margin-top: 0.15rem;
             }
         }
     </style>
@@ -254,63 +244,83 @@
                 <div
                     class="grid grid-cols-2 min-[480px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                     <a href="./pages/daily-boost.html" aria-label="Daily Boost"
-                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
-                        <h2
-                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" fill="none" stroke="currentColor"
-                                stroke-width="1.5" viewBox="0 0 24 24">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        <div class="card-content">
+                            <svg class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-yellow-500 flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 4.5v-2m0 19v-2m8-7h2m-19 0h2m13.364 6.364l1.414-1.414M5.636 5.636L4.222 4.222m13.364-1.414l1.414 1.414M5.636 18.364l-1.414 1.414" />
                             </svg>
-                            Daily Boost
-                        </h2>
-                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Read a fresh quote
-                            or affirmation to start your day inspired.</p>
+                            <div class="card-text-wrapper">
+                                <h2
+                                    class="card-title text-base sm:text-xs md:text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                                    Daily Boost
+                                </h2>
+                                <p class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                    Read a fresh quote or affirmation to start your day inspired.
+                                </p>
+                            </div>
+                        </div>
                     </a>
 
                     <a href="./pages/journal.html" aria-label="Journal With Me"
-                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
-                        <h2
-                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-500" fill="none" stroke="currentColor"
-                                stroke-width="1.5" viewBox="0 0 24 24">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        <div class="card-content">
+                            <svg class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-green-500 flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M16.862 4.487l1.09 1.09a2.25 2.25 0 010 3.182l-9.545 9.545a2.25 2.25 0 01-1.09.59l-3.293.732a.75.75 0 01-.898-.898l.732-3.293a2.25 2.25 0 01.59-1.09l9.545-9.545a2.25 2.25 0 013.182 0z" />
                             </svg>
-                            Journal With Me
-                        </h2>
-                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Get a prompt and
-                            write your thoughts. Reflect, grow, repeat.</p>
+                            <div class="card-text-wrapper">
+                                <h2
+                                    class="card-title text-base sm:text-xs md:text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                                    Journal With Me
+                                </h2>
+                                <p class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                    Get a prompt and write your thoughts. Reflect, grow, repeat.
+                                </p>
+                            </div>
+                        </div>
                     </a>
 
                     <a href="./pages/resources.html" aria-label="Grow Your Mind"
-                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
-                        <h2
-                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" fill="none" stroke="currentColor"
-                                stroke-width="1.5" viewBox="0 0 24 24">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        <div class="card-content">
+                            <svg class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-blue-500 flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 6v6l4 2m6-6a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            Grow Your Mind
-                        </h2>
-                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Curated videos,
-                            books & resources to expand your mindset.</p>
+                            <div class="card-text-wrapper">
+                                <h2
+                                    class="card-title text-base sm:text-xs md:text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                                    Grow Your Mind
+                                </h2>
+                                <p class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                    Curated videos, books & resources to expand your mindset.
+                                </p>
+                            </div>
+                        </div>
                     </a>
 
                     <a href="./pages/chat.html" aria-label="Talk To Someone"
-                        class="floating-card card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
-                        <h2
-                            class="text-base sm:text-xs md:text-xl font-semibold mb-2 flex items-center gap-2 text-gray-900 dark:text-gray-100">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" fill="none" stroke="currentColor"
-                                stroke-width="1.5" viewBox="0 0 24 24">
+                        class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block">
+                        <div class="card-content">
+                            <svg class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-pink-500 flex-shrink-0" fill="none"
+                                stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M7.5 12h.008v.008H7.5V12zm4.5 0h.008v.008H12V12zm4.5 0h.008v.008H16.5V12zm1.125 7.125A9.004 9.004 0 013 12c0-4.97 4.03-9 9-9s9 4.03 9 9c0 1.61-.424 3.122-1.167 4.434a.75.75 0 00-.083.582l.54 2.162a.375.375 0 01-.482.447l-2.162-.54a.75.75 0 00-.582.083z" />
                             </svg>
-                            Talk To Someone
-                        </h2>
-                        <p class="text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">Feeling lonely? Chat
-                            with an AI or find someone online to listen.</p>
+                            <div class="card-text-wrapper">
+                                <h2
+                                    class="card-title text-base sm:text-xs md:text-xl font-semibold mb-2 text-gray-900 dark:text-gray-100">
+                                    Talk To Someone
+                                </h2>
+                                <p class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                    Feeling lonely? Chat with an AI or find someone online to listen.
+                                </p>
+                            </div>
+                        </div>
                     </a>
                 </div>
             </section>
