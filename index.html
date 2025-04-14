@@ -431,65 +431,6 @@
         </audio>
     </div>
 
-    <!-- Background Music-->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const music = document.getElementById('bgMusic');
-            const toggleBtn = document.getElementById('musicToggle');
-            const playIcon = document.getElementById('playIcon');
-            const pauseIcon = document.getElementById('pauseIcon');
-            const musicNote1 = document.getElementById('musicNote1');
-            const musicNote2 = document.getElementById('musicNote2');
-
-            // Set initial volume to 30%
-            music.volume = 0.3;
-
-            // Toggle play/pause
-            toggleBtn.addEventListener('click', function () {
-                if (music.paused) {
-                    music.play()
-                        .then(() => {
-                            playIcon.classList.add('hidden');
-                            pauseIcon.classList.remove('hidden');
-                            // Show and animate music notes
-                            musicNote1.classList.remove('opacity-0');
-                            musicNote2.classList.remove('opacity-0');
-                            musicNote1.style.animation = 'floatUp 3s infinite';
-                            musicNote2.style.animation = 'floatUp 3s infinite 0.5s';
-                        })
-                        .catch(error => {
-                            console.log("Audio playback failed:", error);
-                        });
-                } else {
-                    music.pause();
-                    playIcon.classList.remove('hidden');
-                    pauseIcon.classList.add('hidden');
-                    // Hide and stop animating music notes
-                    musicNote1.classList.add('opacity-0');
-                    musicNote2.classList.add('opacity-0');
-                    musicNote1.style.animation = 'none';
-                    musicNote2.style.animation = 'none';
-                }
-            });
-        });
-
-        // Add floating animation for music notes
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes floatUp {
-                0% {
-                    transform: translateY(0) rotate(0deg);
-                    opacity: 1;
-                }
-                100% {
-                    transform: translateY(-20px) rotate(10deg);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
-
     <script>
         // Typing Animation for Hero Text
         document.addEventListener('DOMContentLoaded', function () {
@@ -577,6 +518,63 @@
                 }, 200));
             }
         });
+
+        // Background Music Control
+        document.addEventListener('DOMContentLoaded', function () {
+                const music = document.getElementById('bgMusic');
+                const toggleBtn = document.getElementById('musicToggle');
+                const playIcon = document.getElementById('playIcon');
+                const pauseIcon = document.getElementById('pauseIcon');
+                const musicNote1 = document.getElementById('musicNote1');
+                const musicNote2 = document.getElementById('musicNote2');
+
+                // Set initial volume to 30%
+                music.volume = 0.3;
+
+                // Toggle play/pause
+                toggleBtn.addEventListener('click', function () {
+                    if (music.paused) {
+                        music.play()
+                            .then(() => {
+                                playIcon.classList.add('hidden');
+                                pauseIcon.classList.remove('hidden');
+                                // Show and animate music notes
+                                musicNote1.classList.remove('opacity-0');
+                                musicNote2.classList.remove('opacity-0');
+                                musicNote1.style.animation = 'floatUp 3s infinite';
+                                musicNote2.style.animation = 'floatUp 3s infinite 0.5s';
+                            })
+                            .catch(error => {
+                                console.log("Audio playback failed:", error);
+                            });
+                    } else {
+                        music.pause();
+                        playIcon.classList.remove('hidden');
+                        pauseIcon.classList.add('hidden');
+                        // Hide and stop animating music notes
+                        musicNote1.classList.add('opacity-0');
+                        musicNote2.classList.add('opacity-0');
+                        musicNote1.style.animation = 'none';
+                        musicNote2.style.animation = 'none';
+                    }
+                });
+            });
+
+            // Add floating animation for music notes
+            const style = document.createElement('style');
+            style.textContent = `
+            @keyframes floatUp {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-20px) rotate(10deg);
+                    opacity: 0;
+                }
+            }
+        `;
+            document.head.appendChild(style);
     </script>
 </body>
 
