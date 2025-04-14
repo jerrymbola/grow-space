@@ -1,0 +1,166 @@
+<div class="content-wrapper flex items-center justify-center px-4">
+    <div class="glass-card w-full max-w-md p-6 sm:p-8 rounded-2xl">
+        <!-- Back Link -->
+        <a href="../index.html" class="back-link link-accent">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Home
+        </a>
+
+        <!-- Tab Selector -->
+        <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6">
+            <button @click="activeTab = 'login'" :class="{ 'tab-active font-medium': activeTab === 'login' }"
+                class="px-4 py-2 focus:outline-none">
+                Sign In
+            </button>
+            <button @click="activeTab = 'signup'" :class="{ 'tab-active font-medium': activeTab === 'signup' }"
+                class="px-4 py-2 focus:outline-none">
+                Create Account
+            </button>
+        </div>
+
+        <!-- Error/Success Messages -->
+        <div x-show="error" x-text="error" class="error-message mb-4"></div>
+        <div x-show="success" x-text="success" class="success-message mb-4"></div>
+
+        <!-- Login Form -->
+        <form x-show="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-4">
+            <div>
+                <label for="login-email"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                <input type="email" id="login-email" x-model="loginEmail" required
+                    class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="your@email.com">
+            </div>
+
+            <div class="password-container">
+                <label for="login-password"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                <input :type="showPassword ? 'text' : 'password'" id="login-password" x-model="loginPassword" required
+                    minlength="6"
+                    class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="••••••">
+                <span @click="showPassword = !showPassword" class="password-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <path x-show="showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                </span>
+            </div>
+
+            <button type="submit" class="w-full btn-primary hover:bg-amber-600 text-white py-2 px-4 rounded-lg transition-colors">
+                Sign In
+            </button>
+
+            <div class="text-center text-sm text-gray-600 dark:text-gray-400">
+                <a href="#" @click.prevent="activeTab = 'signup'" class="text-pink-500 hover:underline">Don't
+                    have an account? Sign up</a>
+            </div>
+        </form>
+
+        <!-- Signup Form -->
+        <form x-show="activeTab === 'signup'" @submit.prevent="handleSignup" class="space-y-4">
+            <div>
+                <label for="signup-email"
+                    class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                <input type="email" id="signup-email" x-model="signupEmail" required
+                    class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="your@email.com">
+            </div>
+
+            <div class="password-container">
+                <label for="signup-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password
+                    (min 6
+                    characters)</label>
+                <input :type="showPassword ? 'text' : 'password'" id="signup-password" x-model="signupPassword" required
+                    minlength="6"
+                    class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="••••••">
+                <span @click="showPassword = !showPassword" class="password-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <path x-show="showPassword" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                </span>
+            </div>
+
+            <div class="password-container">
+                <label for="signup-confirm" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm
+                    Password</label>
+                <input :type="showConfirmPassword ? 'text' : 'password'" id="signup-confirm"
+                    x-model="signupConfirmPassword" required minlength="6"
+                    class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-pink-500 focus:border-pink-500"
+                    placeholder="••••••">
+                <span @click="showConfirmPassword = !showConfirmPassword" class="password-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path x-show="!showConfirmPassword" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path x-show="!showConfirmPassword" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        <path x-show="showConfirmPassword" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                </span>
+            </div>
+
+            <button type="submit" :disabled="loading"
+                class="w-full bg-pink-500 hover:bg-pink-600 text-white py-2 px-4 rounded-lg transition-colors flex justify-center items-center">
+                Create Account
+                <span x-show="loading" class="loader"></span>
+            </button>
+
+            <div class="text-center text-sm text-gray-600 dark:text-gray-400">
+                <a href="#" @click.prevent="activeTab = 'login'" class="text-pink-500 hover:underline">Already
+                    have an account? Sign in</a>
+            </div>
+        </form>
+
+        <!-- Social Login -->
+        <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">Or continue with</p>
+            <div class="flex justify-center gap-4">
+                <!-- Google -->
+                <button @click="signInWithGoogle"
+                    class="social-icon bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#EA4335"
+                            d="M12 10.2v3.6h5.8c-.3 1.5-1.1 2.7-2.3 3.5-1.4 1.1-3.2 1.7-5.5 1.7-4.5 0-8.2-3.7-8.2-8.2S7.5 4.8 12 4.8c2.3 0 4.1.8 5.5 2.2l2.3-2.3C17.5 3 15 2 12 2 6.5 2 2 6.5 2 12s4.5 10 10 10c8.4 0 10-7.5 10-10 0-.7-.1-1.3-.2-2H12z" />
+                    </svg>
+                </button>
+
+                <!-- Facebook -->
+                <button @click="signInWithFacebook"
+                    class="social-icon bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#1877F2"
+                            d="M22 12c0-5.5-4.5-10-10-10S2 6.5 2 12c0 5 3.7 9.1 8.4 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7C18.3 21.1 22 17 22 12z" />
+                    </svg>
+                </button>
+
+                <!-- Apple -->
+                <button @click="signInWithApple" class="social-icon bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#000000"
+                            d="M18.7 12.7c0-1.5.7-2.8 1.8-3.7-1.4-1.7-3.6-2-4.9-2-1.1-.1-2.2.6-2.8.6-.6 0-1.5-.6-2.5-.6-2.4 0-4.6 1.7-4.6 5.2 0 1.3.3 2.7.8 3.9.6 1.4 1.4 2.9 2.5 2.9.9 0 1.5-.6 2.8-.6 1.3 0 1.8.6 2.8.6 1.1 0 1.8-1.4 2.4-2.8.8-1.8 1.1-3.6 1.1-4.1zm-3.1-7.4c.8-1 1.4-2.3 1.2-3.7-1.2.1-2.6.8-3.5 1.8-.8.9-1.4 2.2-1.2 3.5 1.4.1 2.7-.7 3.5-1.6z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

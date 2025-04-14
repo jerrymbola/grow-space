@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en"
+    x-data="{ dark: false, activeTab: 'login', showPassword: false, showConfirmPassword: false, loading: false, error: '', success: '' }"
+    :class="{ 'dark': dark }">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Signup | b.you!</title>
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: 'rgba(255, 255, 255, 0.25)',
+                        darkglass: 'rgba(15, 23, 42, 0.5)',
+                        darkbg: '#0f172a',
+                        lightbg: '#f8fafc',
+                        primary: {
+                            light: '#a5b4fc',  // Vibrant indigo-300
+                            dark: '#6366f1'    // Vibrant indigo-500
+                        },
+                        secondary: {
+                            light: '#86efac',  // Vibrant emerald-300
+                            dark: '#10b981'    // Vibrant emerald-500
+                        },
+                        accent: {
+                            light: '#f9a8d4',  // Vibrant pink-300
+                            dark: '#ec4899'    // Vibrant pink-500
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '4px',
+                        sm: '8px',
+                    },
+                    boxShadow: {
+                        glass: '0 4px 30px rgba(0, 0, 0, 0.1)',
+                    },
+                },
+            },
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Solid Background Colors */
+        body {
+            background-color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        .dark body {
+            background-color: #0f172a;
+        }
+
+        /* Enhanced glass card styling */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Card hover effects */
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.2);
+        }
+
+        /* Theme Toggle Animation */
+        .theme-toggle {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .theme-toggle svg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle .sun {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        .theme-toggle .moon {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .dark .theme-toggle .sun {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .dark .theme-toggle .moon {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+
+        /* Glow Effects */
+        .glow-icon {
+            filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.3));
+            transition: filter 0.3s ease;
+        }
+
+        .glow-icon:hover {
+            filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+        }
+
+        /* Animated Pulse */
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.3));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6));
+            }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2.5s infinite;
+        }
+
+        /* Card content alignment */
+        .card-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .card-text-wrapper {
+            flex: 1;
+        }
+
+        /* Icon alignment fix */
+        .card-icon {
+            margin-top: 0.25rem;
+            filter: url(#glow);
+        }
+
+        /* Ensure proper touch targets */
+        a,
+        button {
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        /* Focus states */
+        a:focus,
+        button:focus {
+            outline: 2px solid #6366f1;
+            outline-offset: 2px;
+            border-radius: 0.25rem;
+        }
+
+        /* Layout structure */
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: 100vw;
+            overflow: hidden;
+        }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding-top: 80px;
+        }
+
+        .hero-section {
+            flex: 1;
+        }
+
+        /* Sticky header */
+        .sticky-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .sticky-header {
+            background: rgba(15, 23, 42, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 556px) {
+            .content-wrapper {
+                padding-top: 70px;
+            }
+
+            .hero-title {
+                font-size: 1.5rem;
+                line-height: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                line-height: 1.5rem;
+            }
+
+            /* Card content adjustments */
+            .card-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .card-title {
+                font-size: 0.75rem;
+                line-height: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .card-text {
+                font-size: 0.6875rem;
+                line-height: 0.875rem;
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .card-icon {
+                width: 16px;
+                height: 16px;
+                margin-top: 0;
+                align-self: flex-start;
+            }
+        }
+
+        /* New styles */
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 38px;
+            cursor: pointer;
+            color: #6B7280;
+            transition: all 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #6366f1;
+            transform: scale(1.1);
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .success-message {
+            color: #10b981;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6366f1;
+            margin-bottom: 1rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+            color: #4f46e5;
+        }
+
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #6366f1;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .social-icon {
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Color Scheme Update */
+        .btn-primary {
+            background-color: #6366f1;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.3);
+        }
+
+        .tab-active {
+            position: relative;
+            color: #6366f1;
+            font-weight: 500;
+        }
+
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: #6366f1;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .link-accent {
+            color: #6366f1;
+            transition: all 0.2s ease;
+        }
+
+        .link-accent:hover {
+            color: #4f46e5;
+            text-decoration-color: #4f46e5;
+        }
+
+        /* Input focus styles */
+        .focus-primary:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            outline: none;
+        }
+
+        /* Glow effect update */
+        .glow-icon {
+            filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.3));
+        }
+
+        /* Dark mode adjustments */
+        .dark {
+            .btn-primary {
+                background-color: #818cf8;
+            }
+
+            .btn-primary:hover {
+                background-color: #6366f1;
+            }
+
+            .tab-active {
+                color: #818cf8;
+            }
+
+            .tab-active::after {
+                background-color: #818cf8;
+            }
+
+            .link-accent {
+                color: #a5b4fc;
+            }
+
+            .link-accent:hover {
+                color: #818cf8;
+            }
+
+            .focus-primary:focus {
+                box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.3);
+            }
+        }
+    </style>
+
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script>
+        // Your Firebase config (replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+    </script>
+</head>
+
+<body class="font-sans transition-colors duration-300 text-gray-800 dark:text-gray-100">
+    <div class="page-container">
+        <!-- Sticky Navbar -->
+        <header class="sticky-header py-4 w-full">
+            <div class="flex items-center justify-between px-6 lg:px-[3.5rem] max-w-7xl mx-auto">
+                <h1 class="text-2xl font-bold tracking-wide text-gray-900 dark:text-gray-100">b.you!</h1>
+
+                <div class="flex items-center gap-4">
+                    <!-- Theme Toggle -->
+                    <button @click="dark = !dark" aria-label="Toggle dark mode"
+                        class="theme-toggle glass-card hover:bg-white/30 dark:hover:bg-black/30 w-10 h-10 rounded-full flex items-center justify-center focus:outline-none">
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="sun h-6 w-6 text-amber-300"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 3v1m0 16v1m8.66-8.66h-1M4.34 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="moon h-6 w-6 text-indigo-500"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.293 14.707A8 8 0 0112 4a8 8 0 000 16 8 8 0 005.293-1.707z" />
+                        </svg>
+                        <span class="sr-only">Toggle dark mode</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper flex items-center justify-center px-4">
+            <div class="glass-card w-full max-w-md p-6 sm:p-8 rounded-2xl">
+                <!-- Back Link -->
+                <a href="../index.html" class="back-link link-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Home
+                </a>
+
+                <!-- Tab Selector -->
+                <div class="flex border-b border-gray-200 dark:border-gray-700 mb-6">
+                    <button @click="activeTab = 'login'" :class="{ 'tab-active': activeTab === 'login' }"
+                        class="px-4 py-2 focus:outline-none relative transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                        Sign In
+                    </button>
+                    <button @click="activeTab = 'signup'" :class="{ 'tab-active': activeTab === 'signup' }"
+                        class="px-4 py-2 focus:outline-none relative transition-colors duration-200 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                        Create Account
+                    </button>
+                </div>
+
+                <!-- Error/Success Messages -->
+                <div x-show="error" x-text="error" class="error-message mb-4"></div>
+                <div x-show="success" x-text="success" class="success-message mb-4"></div>
+
+                <!-- Login Form -->
+                <form x-show="activeTab === 'login'" @submit.prevent="handleLogin" class="space-y-4">
+                    <div>
+                        <label for="login-email"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                        <input type="email" id="login-email" x-model="loginEmail" required
+                            class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 focus-primary"
+                            placeholder="your@email.com">
+                    </div>
+
+                    <div class="password-container">
+                        <label for="login-password"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                        <input :type="showPassword ? 'text' : 'password'" id="login-password" x-model="loginPassword"
+                            required minlength="6"
+                            class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 focus-primary"
+                            placeholder="••••••">
+                        <span @click="showPassword = !showPassword" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path x-show="showPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    <button type="submit" class="w-full btn-primary text-white py-2 px-4 rounded-lg">
+                        Sign In
+                    </button>
+
+                    <div class="text-center text-sm text-gray-600 dark:text-gray-400">
+                        <a href="#" @click.prevent="activeTab = 'signup'" class="link-accent hover:underline">Don't have
+                            an account? Sign up</a>
+                    </div>
+                </form>
+
+                <!-- Signup Form -->
+                <form x-show="activeTab === 'signup'" @submit.prevent="handleSignup" class="space-y-4">
+                    <div>
+                        <label for="signup-email"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                        <input type="email" id="signup-email" x-model="signupEmail" required
+                            class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 focus-primary"
+                            placeholder="your@email.com">
+                    </div>
+
+                    <div class="password-container">
+                        <label for="signup-password"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password
+                            (min 6 characters)</label>
+                        <input :type="showPassword ? 'text' : 'password'" id="signup-password" x-model="signupPassword"
+                            required minlength="6"
+                            class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 focus-primary"
+                            placeholder="••••••">
+                        <span @click="showPassword = !showPassword" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path x-show="!showPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path x-show="showPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div class="password-container">
+                        <label for="signup-confirm"
+                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm
+                            Password</label>
+                        <input :type="showConfirmPassword ? 'text' : 'password'" id="signup-confirm"
+                            x-model="signupConfirmPassword" required minlength="6"
+                            class="w-full px-3 py-2 mt-1 bg-white/50 dark:bg-darkglass rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 focus-primary"
+                            placeholder="••••••">
+                        <span @click="showConfirmPassword = !showConfirmPassword" class="password-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path x-show="!showConfirmPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path x-show="!showConfirmPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <path x-show="showConfirmPassword" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                            </svg>
+                        </span>
+                    </div>
+
+                    <button type="submit" :disabled="loading"
+                        class="w-full btn-primary text-white py-2 px-4 rounded-lg flex justify-center items-center">
+                        Create Account
+                        <span x-show="loading" class="loader"></span>
+                    </button>
+
+                    <div class="text-center text-sm text-gray-600 dark:text-gray-400">
+                        <a href="#" @click.prevent="activeTab = 'login'" class="link-accent hover:underline">Already
+                            have an account? Sign in</a>
+                    </div>
+                </form>
+
+                <!-- Social Login -->
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                    <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">Or continue with</p>
+                    <div class="flex justify-center gap-4">
+                        <!-- Google -->
+                        <button @click="signInWithGoogle"
+                            class="social-icon bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#EA4335"
+                                    d="M12 10.2v3.6h5.8c-.3 1.5-1.1 2.7-2.3 3.5-1.4 1.1-3.2 1.7-5.5 1.7-4.5 0-8.2-3.7-8.2-8.2S7.5 4.8 12 4.8c2.3 0 4.1.8 5.5 2.2l2.3-2.3C17.5 3 15 2 12 2 6.5 2 2 6.5 2 12s4.5 10 10 10c8.4 0 10-7.5 10-10 0-.7-.1-1.3-.2-2H12z" />
+                            </svg>
+                        </button>
+
+                        <!-- Facebook -->
+                        <button @click="signInWithFacebook"
+                            class="social-icon bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#1877F2"
+                                    d="M22 12c0-5.5-4.5-10-10-10S2 6.5 2 12c0 5 3.7 9.1 8.4 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7C18.3 21.1 22 17 22 12z" />
+                            </svg>
+                        </button>
+
+                        <!-- Apple -->
+                        <button @click="signInWithApple"
+                            class="social-icon bg-white/80 dark:bg-gray-700 hover:bg-white dark:hover:bg-gray-600">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                                <path fill="#000000"
+                                    d="M18.7 12.7c0-1.5.7-2.8 1.8-3.7-1.4-1.7-3.6-2-4.9-2-1.1-.1-2.2.6-2.8.6-.6 0-1.5-.6-2.5-.6-2.4 0-4.6 1.7-4.6 5.2 0 1.3.3 2.7.8 3.9.6 1.4 1.4 2.9 2.5 2.9.9 0 1.5-.6 2.8-.6 1.3 0 1.8.6 2.8.6 1.1 0 1.8-1.4 2.4-2.8.8-1.8 1.1-3.6 1.1-4.1zm-3.1-7.4c.8-1 1.4-2.3 1.2-3.7-1.2.1-2.6.8-3.5 1.8-.8.9-1.4 2.2-1.2 3.5 1.4.1 2.7-.7 3.5-1.6z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('auth', () => ({
+                // Form fields
+                loginEmail: '',
+                loginPassword: '',
+                signupEmail: '',
+                signupPassword: '',
+                signupConfirmPassword: '',
+
+                // UI states
+                showPassword: false,
+                showConfirmPassword: false,
+                loading: false,
+                error: '',
+                success: '',
+
+                // Handle login
+                async handleLogin() {
+                    this.error = '';
+                    this.success = '';
+
+                    // Basic validation
+                    if (!this.loginEmail || !this.loginPassword) {
+                        this.error = 'Please fill in all fields';
+                        return;
+                    }
+
+                    if (!this.isValidEmail(this.loginEmail)) {
+                        this.error = 'Please enter a valid email address';
+                        return;
+                    }
+
+                    this.loading = true;
+
+                    try {
+                        // Firebase login
+                        await auth.signInWithEmailAndPassword(this.loginEmail, this.loginPassword);
+                        this.success = 'Login successful! Redirecting...';
+                        // Redirect to home page after login
+                        setTimeout(() => window.location.href = '../index.html', 1500);
+                    } catch (err) {
+                        this.error = this.getFirebaseError(err);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                // Handle signup
+                async handleSignup() {
+                    this.error = '';
+                    this.success = '';
+
+                    // Basic validation
+                    if (!this.signupEmail || !this.signupPassword || !this.signupConfirmPassword) {
+                        this.error = 'Please fill in all fields';
+                        return;
+                    }
+
+                    if (!this.isValidEmail(this.signupEmail)) {
+                        this.error = 'Please enter a valid email address';
+                        return;
+                    }
+
+                    if (this.signupPassword.length < 6) {
+                        this.error = 'Password must be at least 6 characters';
+                        return;
+                    }
+
+                    if (this.signupPassword !== this.signupConfirmPassword) {
+                        this.error = 'Passwords do not match';
+                        return;
+                    }
+
+                    this.loading = true;
+
+                    try {
+                        // Firebase signup
+                        await auth.createUserWithEmailAndPassword(this.signupEmail, this.signupPassword);
+                        this.success = 'Account created successfully! Redirecting...';
+                        // Redirect to home page after signup
+                        setTimeout(() => window.location.href = '../index.html', 1500);
+                    } catch (err) {
+                        this.error = this.getFirebaseError(err);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                // Google sign-in
+                async signInWithGoogle() {
+                    this.error = '';
+                    this.loading = true;
+
+                    try {
+                        const provider = new firebase.auth.GoogleAuthProvider();
+                        await auth.signInWithPopup(provider);
+                        this.success = 'Login successful! Redirecting...';
+                        setTimeout(() => window.location.href = '../index.html', 1500);
+                    } catch (err) {
+                        this.error = this.getFirebaseError(err);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                // Facebook sign-in
+                async signInWithFacebook() {
+                    this.error = '';
+                    this.loading = true;
+
+                    try {
+                        const provider = new firebase.auth.FacebookAuthProvider();
+                        await auth.signInWithPopup(provider);
+                        this.success = 'Login successful! Redirecting...';
+                        setTimeout(() => window.location.href = '../index.html', 1500);
+                    } catch (err) {
+                        this.error = this.getFirebaseError(err);
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                // Helper functions
+                isValidEmail(email) {
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                },
+
+                getFirebaseError(err) {
+                    switch (err.code) {
+                        case 'auth/invalid-email':
+                            return 'Invalid email address';
+                        case 'auth/user-disabled':
+                            return 'Account disabled';
+                        case 'auth/user-not-found':
+                            return 'No account found with this email';
+                        case 'auth/wrong-password':
+                            return 'Incorrect password';
+                        case 'auth/email-already-in-use':
+                            return 'Email already in use';
+                        case 'auth/weak-password':
+                            return 'Password is too weak';
+                        case 'auth/operation-not-allowed':
+                            return 'Operation not allowed';
+                        case 'auth/too-many-requests':
+                            return 'Too many requests. Try again later';
+                        default:
+                            return 'Something went wrong. Please try again';
+                    }
+                }
+            }));
+        });
+    </script>
+</body>
+
+</html>
