@@ -245,7 +245,8 @@
     </style>
 </head>
 
-/* SVG filter definition </body> */
+<!-- SVG filter definition -->
+</body>
 <svg class="hidden">
     <defs>
         <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
@@ -312,7 +313,8 @@
                                     class="card-title text-base sm:text-xs md:text-xl font-semibold text-gray-900 dark:text-gray-100">
                                     Daily Boost
                                 </h2>
-                                <p id="daily-desc" class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                <p id="daily-desc"
+                                    class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
                                     Read a fresh quote or affirmation to start your day inspired.
                                 </p>
                             </div>
@@ -346,8 +348,8 @@
                         class="card-hover glass-card p-4 sm:p-5 md:p-6 rounded-2xl cursor-pointer block focus:outline-none">
                         <div class="card-content">
                             <svg aria-hidden="true"
-                                class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]" fill="none"
-                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                class="card-icon w-5 h-5 sm:w-6 sm:h-6 text-blue-500 drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]"
+                                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                             </svg>
@@ -356,7 +358,8 @@
                                     class="card-title text-base sm:text-xs md:text-xl font-semibold text-gray-900 dark:text-gray-100">
                                     Grow Your Mind
                                 </h2>
-                                <p id="grow-desc" class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
+                                <p id="grow-desc"
+                                    class="card-text text-xs sm:text-xs md:text-base text-gray-700 dark:text-gray-300">
                                     Curated videos, books & resources to expand your mindset.
                                 </p>
                             </div>
@@ -403,7 +406,7 @@
                 class="absolute -top-3 right-3 text-blue-400 opacity-0 transition-all duration-500 text-sm">
                 ♫
             </div>
-    
+
             <!-- Play/Pause Icons -->
             <svg id="playIcon"
                 class="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors"
@@ -420,14 +423,15 @@
                     d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
         </button>
-    
+
         <audio id="bgMusic" loop>
             <source src="./music/Tranquility - Deep Healing Relaxing Music - Meditation Ambient Music.mp3"
                 type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
     </div>
-    <!-- Background Music Control -->
+
+    <!-- Background Music-->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const music = document.getElementById('bgMusic');
@@ -489,26 +493,26 @@
     <script>
         // Typing Animation for Hero Text
         document.addEventListener('DOMContentLoaded', function () {
-                const heroTitle = document.querySelector('.hero-title');
-                if (!heroTitle) return;
+            const heroTitle = document.querySelector('.hero-title');
+            if (!heroTitle) return;
 
-                const phrases = [
-                    "Take a deep breath. You're growing, not failing.",
-                    "Progress, not perfection.",
-                    "One step at a time.",
-                    "You're exactly where you need to be."
-                ];
-                let currentPhrase = 0;
+            const phrases = [
+                "Take a deep breath. You're growing, not failing.",
+                "Progress, not perfection.",
+                "One step at a time.",
+                "You're exactly where you need to be."
+            ];
+            let currentPhrase = 0;
 
-                // Create a blinking cursor element
-                const cursor = document.createElement('span');
-                cursor.className = 'typing-cursor';
-                cursor.textContent = '|';
-                cursor.style.animation = 'blink 1s infinite';
+            // Create a blinking cursor element
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            cursor.textContent = '|';
+            cursor.style.animation = 'blink 1s infinite';
 
-                // Add styles for blinking cursor
-                const style = document.createElement('style');
-                style.textContent = `
+            // Add styles for blinking cursor
+            const style = document.createElement('style');
+            style.textContent = `
             @keyframes blink {
                 0%, 100% { opacity: 1; }
                 50% { opacity: 0; }
@@ -519,40 +523,40 @@
                 margin-left: 2px;
             }
         `;
-                document.head.appendChild(style);
+            document.head.appendChild(style);
 
-                function typeWriter(text, i, fnCallback) {
-                    if (i < text.length) {
-                        heroTitle.innerHTML = text.substring(0, i + 1);
-                        heroTitle.appendChild(cursor);
-                        setTimeout(function () {
-                            typeWriter(text, i + 1, fnCallback);
-                        }, 120);
-                    } else if (typeof fnCallback == 'function') {
-                        // Keep cursor blinking at end of phrase
-                        heroTitle.innerHTML = text;
-                        heroTitle.appendChild(cursor);
-                        setTimeout(fnCallback, 2500);
-                    }
-                }
-
-                function startTextAnimation() {
-                    typeWriter(phrases[currentPhrase], 0, function () {
-                        currentPhrase = (currentPhrase + 1) % phrases.length;
-                        setTimeout(startTextAnimation, 800);
-                    });
-                }
-
-                // Check for reduced motion preference
-                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                    heroTitle.textContent = phrases[0];
-                } else {
-                    // Start with just the cursor before typing begins
-                    heroTitle.innerHTML = '';
+            function typeWriter(text, i, fnCallback) {
+                if (i < text.length) {
+                    heroTitle.innerHTML = text.substring(0, i + 1);
                     heroTitle.appendChild(cursor);
-                    setTimeout(startTextAnimation, 1000);
+                    setTimeout(function () {
+                        typeWriter(text, i + 1, fnCallback);
+                    }, 120);
+                } else if (typeof fnCallback == 'function') {
+                    // Keep cursor blinking at end of phrase
+                    heroTitle.innerHTML = text;
+                    heroTitle.appendChild(cursor);
+                    setTimeout(fnCallback, 2500);
                 }
-            });
+            }
+
+            function startTextAnimation() {
+                typeWriter(phrases[currentPhrase], 0, function () {
+                    currentPhrase = (currentPhrase + 1) % phrases.length;
+                    setTimeout(startTextAnimation, 800);
+                });
+            }
+
+            // Check for reduced motion preference
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                heroTitle.textContent = phrases[0];
+            } else {
+                // Start with just the cursor before typing begins
+                heroTitle.innerHTML = '';
+                heroTitle.appendChild(cursor);
+                setTimeout(startTextAnimation, 1000);
+            }
+        });
 
         // Simple debounce function for theme toggle
         function debounce(func, wait) {
