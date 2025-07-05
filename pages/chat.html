@@ -568,8 +568,8 @@
                 loading: false,
                 chatType: 'ai', // 'ai' or 'community'
 
-                // For Gemini API - you'll need to get your own API key
-                apiKey: 'YOUR_GEMINI_API_KEY', // Replace with your actual API key
+                // For Gemini API - Get own API key
+                apiKey: 'GEMINI_API_KEY', // Replace with actual API key
                 apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
 
                 init() {
@@ -647,7 +647,7 @@
                 },
 
                 async callGeminiAPI(prompt) {
-                    if (!this.apiKey || this.apiKey === 'YOUR_GEMINI_API_KEY') {
+                    if (!this.apiKey || this.apiKey === 'GEMINI_API_KEY') {
                         // Fallback to mock responses if API key isn't set
                         return this.getMockResponse(prompt);
                     }
